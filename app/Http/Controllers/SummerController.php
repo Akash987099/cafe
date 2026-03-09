@@ -1,0 +1,132 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use App\Models\Summer;
+
+class SummerController extends Controller
+{
+    protected $summer;
+
+    public function __construct()
+    {
+        $this->summer = new Summer();
+    }
+
+    public function index()
+    {
+        $summer = $this->summer->orderBy('position', 'ASC')->paginate(config('pagination_limit'));
+        return view('summer.index', compact('summer'));
+    }
+
+    public function add()
+    {
+        return view('summer.add');
+    }
+
+    public function save(Request $request)
+    {
+        // dd($request->all());
+
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'title' => 'required'
+        ]);
+
+        $summer = $this->summer;
+
+         if ($request->hasFile('image')) {
+
+            $imageName = time() . '_' . $request->file('image')->getClientOriginalName();
+            $request->file('image')->move(public_path('summer'), $imageName);
+
+            $summer->image = 'summer/' . $imageName;
+        }
+
+        $summer->name = $request->name;
+        $summer->sub_name = $request->title;
+        $summer->time = $request->time;
+        $save = $summer->save();
+
+        if ($save) {
+            return redirect()->back()->with('success', 'Successfully!');
+        }
+        return redirect()->back()->with('error', 'Failed!');
+    }
+
+    public function edit($id)
+    {
+        // dd($id);
+        if (!$id) {
+            return redirect()->back()->with('error', 'id not found!');
+        }
+
+        $summer = $this->summer->find($id);
+
+        if (!$summer) {
+            return redirect()->back()->with('error', 'Record not found!');
+        }
+
+        return view('summer.edit', compact('summer'));
+    }
+
+    public function update(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'title' => 'required'
+        ]);
+
+        $summer = $this->summer->find($request->id);
+
+        if (!$summer) {
+            return redirect()->back()->with('error', 'Record not found!');
+        }
+
+        if ($request->hasFile('image')) {
+
+            if ($summer->image && file_exists(public_path($summer->image))) {
+                unlink(public_path($summer->image));
+            }
+
+            $imageName = time() . '_' . $request->file('image')->getClientOriginalName();
+            $request->file('image')->move(public_path('summer'), $imageName);
+
+            $summer->image = 'summer/' . $imageName;
+        }
+
+        $summer->name = $request->name;
+        $summer->sub_name = $request->title;
+        $summer->time = $request->time;
+
+        if ($summer->save()) {
+            return redirect()->back()->with('success', 'Updated successfully!');
+        }
+
+        return redirect()->back()->with('error', 'Update failed!');
+    }
+
+    public function updatePosition(Request $request)
+    {
+        try {
+            $positions = $request->positions;
+
+            foreach ($positions as $index => $id) {
+                Summer::where('id', $id)->update([
+                    'position' => $index + 1
+                ]);
+            }
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Position updated successfully'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+}
