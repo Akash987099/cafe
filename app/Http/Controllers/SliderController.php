@@ -39,6 +39,7 @@ class SliderController extends Controller
 
         $slider = $this->slider;
         $slider->name = $request->title;
+        $slider->link = $request->link;
         $slider->status = 1;
         $slider->image = 'slider/' . $imageName;
         $save = $slider->save();
@@ -109,6 +110,7 @@ class SliderController extends Controller
         }
 
         $slider->name = $request->title;
+        $slider->link = $request->link;
         if ($request->hasFile('image')) {
 
             if ($slider->image && file_exists(public_path($slider->image))) {

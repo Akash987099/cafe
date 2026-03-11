@@ -27,6 +27,7 @@ Route::post('/verify/email', [AuthController::class, 'verifyEmail']);
 // Category
 Route::get('/category', [CategoryController::class, 'category']);
 Route::get('/category-subcategory', [CategoryController::class, 'categorySubcategory']);
+Route::get('/favourite-category', [CategoryController::class, 'FavouriteSubcategory']);
 Route::get('/sub-category/{id?}', [CategoryController::class, 'subCategory']);
 Route::get('/brands', [CategoryController::class, 'brands']);
 

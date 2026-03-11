@@ -42,6 +42,14 @@
                                 </div>
                             </div>
 
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label class="form-label">Http URL / Link</label>
+                                    <input type="text" class="form-control" name="link" value="{{$slider->link}}"
+                                        placeholder="Enter URL Link" required>
+                                </div>
+                            </div>
+
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="vehicle_number" class="form-label fw-semibold mb-2">

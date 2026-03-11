@@ -37,7 +37,7 @@
                                     </th>
 
                                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                        Time
+                                        Status
                                     </th>
 
                                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
@@ -63,8 +63,18 @@
                                             {{ $item->sub_name }}
                                         </td>
 
-                                        <td class="text-xs">
-                                            {{ $item->time }}
+                                        <td>
+                                            <select name="status" class="form-control text-xs font-weight-bold select_top">
+                                                <option value="">Select</option>
+                                                <option value="1" data-id="{{ $item->id }}"
+                                                    {{ $item->status == '1' ? 'selected' : '' }}>
+                                                    Active
+                                                </option>
+                                                <option value="0" data-id="{{ $item->id }}"
+                                                    {{ $item->status == '0' ? 'selected' : '' }}>
+                                                    InActive
+                                                </option>
+                                            </select>
                                         </td>
 
                                         <td>
@@ -95,28 +105,56 @@
     </div>
 
     <script>
-    $("#sortable-table").sortable({
-        handle: '.drag-handle',
-        update: function () {
-            let positions = [];
+        $("#sortable-table").sortable({
+            handle: '.drag-handle',
+            update: function() {
+                let positions = [];
 
-            $("#sortable-table tr").each(function () {
-                positions.push($(this).data('id'));
+                $("#sortable-table tr").each(function() {
+                    positions.push($(this).data('id'));
+                });
+
+                $.ajax({
+                    url: "{{ route('summer.updatePosition') }}",
+                    method: "POST",
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        positions: positions
+                    },
+                    success: function(res) {
+                        console.log(res.message);
+                    }
+                });
+            }
+        });
+    </script>
+
+    <script>
+        $(document).ready(function() {
+            $('.select_top').on('change', function() {
+
+                var product_id = $(this).find(':selected').data('id');
+                var value = $(this).val();
+
+                // console.log(product_id, value);
+
+                $.ajax({
+                    url: "{{ route('summer.status') }}",
+                    type: "POST",
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        id: product_id,
+                        status: value,
+                    },
+                    success: function(res) {
+                        console.log(res.message);
+                    },
+                    error: function(xhr) {
+                        console.log(xhr.responseText);
+                        alert('Something went wrong');
+                    }
+                });
             });
-
-            $.ajax({
-                url: "{{ route('summer.updatePosition') }}",
-                method: "POST",
-                data: {
-                    _token: "{{ csrf_token() }}",
-                    positions: positions
-                },
-                success: function (res) {
-                    console.log(res.message);
-                }
-            });
-        }
-    });
-</script>
-
+        });
+    </script>
 @endsection

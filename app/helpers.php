@@ -3,6 +3,7 @@
 use App\Models\EmailTemplate;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\OtpMail;
+use App\Models\Setting;
 use Illuminate\Support\Facades\Http;
 
 use Carbon\Carbon;
@@ -43,7 +44,6 @@ if (!function_exists('send_email')) {
             );
 
             return true;
-
         } catch (\Exception $e) {
 
             return false;
@@ -55,12 +55,19 @@ if (!function_exists('send_whatsapp_otp')) {
 
     function send_whatsapp_otp($phone, $otp)
     {
-        $message = "Your OTP is: ".$otp;
+        $message = "Your OTP is: " . $otp;
 
-        $phone = '91'.$phone;
+        $phone = '91' . $phone;
 
-        $url = "https://wa.me/".$phone."?text=".urlencode($message);
+        $url = "https://wa.me/" . $phone . "?text=" . urlencode($message);
 
         return $url;
+    }
+
+    if (!function_exists('setting')) {
+        function setting($slug)
+        {
+            return Setting::where('slug', $slug)->first();
+        }
     }
 }

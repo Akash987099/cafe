@@ -36,7 +36,7 @@ class SummerController extends Controller
 
         $summer = $this->summer;
 
-         if ($request->hasFile('image')) {
+        if ($request->hasFile('image')) {
 
             $imageName = time() . '_' . $request->file('image')->getClientOriginalName();
             $request->file('image')->move(public_path('summer'), $imageName);
@@ -46,7 +46,7 @@ class SummerController extends Controller
 
         $summer->name = $request->name;
         $summer->sub_name = $request->title;
-        $summer->time = $request->time;
+        // $summer->time = $request->time;
         $save = $summer->save();
 
         if ($save) {
@@ -98,7 +98,7 @@ class SummerController extends Controller
 
         $summer->name = $request->name;
         $summer->sub_name = $request->title;
-        $summer->time = $request->time;
+        // $summer->time = $request->time;
 
         if ($summer->save()) {
             return redirect()->back()->with('success', 'Updated successfully!');
@@ -128,5 +128,34 @@ class SummerController extends Controller
                 'message' => $e->getMessage()
             ], 500);
         }
+    }
+
+    public function status(Request $request)
+    {
+        $status = $request->value;
+        $id = $request->id;
+
+        if (empty($id)) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'ID not found'
+            ], 400);
+        }
+
+        $summer = $this->summer->find($id);
+
+        if (!$summer) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Record not found'
+            ], 404);
+        }
+
+        $summer->status = $summer->status == '1' ? '0' : '1';
+        $summer->save();
+
+        return response()->json([
+            'status'    => 'success',
+        ], 200);
     }
 }

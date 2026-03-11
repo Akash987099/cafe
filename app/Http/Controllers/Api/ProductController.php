@@ -50,6 +50,7 @@ class ProductController extends Controller
                 }])
                 ->select('id', 'name', 'position', 'image as banner')
                 ->whereNotNull('position')
+                ->where('status', 1)
                 ->orderBy('position', 'Asc')
                 ->get();
 
@@ -62,27 +63,27 @@ class ProductController extends Controller
                 });
             });
 
-            $categoryIds = $data->pluck('products')
-                ->flatten()
-                ->pluck('category')
-                ->filter()
-                ->unique()
-                ->values();
+            // $categoryIds = $data->pluck('products')
+            //     ->flatten()
+            //     ->pluck('category')
+            //     ->filter()
+            //     ->unique()
+            //     ->values();
 
-            $categories = [];
+            // $categories = [];
 
-            foreach ($categoryIds as $categoryId) {
+            // foreach ($categoryIds as $categoryId) {
 
-                $cat = $this->categorysubcategory($categoryId);
+            //     $cat = $this->categorysubcategory($categoryId);
 
-                if ($cat) {
-                    $categories[] = $cat;
-                }
-            }
+            //     if ($cat) {
+            //         $categories[] = $cat;
+            //     }
+            // }
 
             return response()->json([
                 'status' => true,
-                'categories' => $categories,
+                // 'categories' => $categories,
                 'data'   => $data
             ], 200);
         } catch (\Exception $e) {

@@ -217,6 +217,7 @@ Route::middleware(['auth:admin'])->group(function () {
         Route::post('save', 'save')->name('save');
         Route::get('edit/{id}', 'edit')->name('edit');
         Route::post('update', 'update')->name('update');
+        Route::post('status', 'status')->name('status');
         Route::post('update-position', 'updatePosition')->name('updatePosition');
     });
 

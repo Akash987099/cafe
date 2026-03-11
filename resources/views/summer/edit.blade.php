@@ -33,13 +33,6 @@
 
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label class="form-label">Time</label>
-                                    <input type="time" class="form-control" name="time" value="{{$summer->time}}" required>
-                                </div>
-                            </div>
-
-                            <div class="col-md-6">
-                                <div class="form-group">
                                     <label class="form-label">Image</label>
                                     <input type="file" class="form-control" name="image">
                                 </div>

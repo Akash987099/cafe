@@ -7,7 +7,7 @@
     <link rel="apple-touch-icon" sizes="76x76" href="/images/favicon.png">
     <link rel="icon" type="image/png" href="/images/favicon.png">
     <title>
-        Arya Mall
+        {{setting('web_name')->name}}
     </title>
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
     <link href="{{ asset('assets/admin/css/nucleo-icons.css') }}" rel="stylesheet" />
@@ -82,7 +82,7 @@
                 aria-hidden="true" id="iconSidenav"></i>
             <a class="navbar-brand m-0" href=" https://demos.creative-tim.com/soft-ui-dashboard/pages/dashboard.html "
                 target="_blank">
-                <img src="" class="navbar-brand-img h-auto bg-black" alt="main_logo">
+                <img src="{{ asset(setting('web_name')->image ?? '') }}" class="navbar-brand-img h-auto bg-black" alt="main_logo">
             </a>
         </div>
         <hr class="horizontal dark mt-0">

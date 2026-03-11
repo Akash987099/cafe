@@ -83,6 +83,48 @@ class CategoryController extends Controller
         ], 200);
     }
 
+    public function FavouriteSubcategory()
+    {
+        $category = Category::whereHas('subCategories')
+            ->with(['subCategories' => function ($query) {
+                $query->select('id', 'category_id', 'name', 'image')
+                    ->withCount(['products' => function ($q) {
+                        $q->where('status', 'active');
+                    }]);
+            }])
+            ->orderBy('position', 'desc')
+            ->select('id', 'name', 'image')
+            ->first();
+
+        if (!$category) {
+            return response()->json([
+                'status' => false,
+                'data' => null
+            ]);
+        }
+
+        $data = [
+            'url'   => '2-' . Str::slug($category->name) . '-' . $category->id,
+            'name'  => $category->name,
+            'image' => $category->image,
+
+            'subCategories' => $category->subCategories->map(function ($sub) {
+
+                return [
+                    'url'   => '3-' . Str::slug($sub->name) . '-' . $sub->id,
+                    'name'  => $sub->name,
+                    'image' => $sub->image,
+                    'products' => $sub->products_count
+                ];
+            })->values()
+        ];
+
+        return response()->json([
+            'status' => true,
+            'data'   => $data
+        ], 200);
+    }
+
     public function subCategory($id = null)
     {
         $subcategory = $this->subcategory

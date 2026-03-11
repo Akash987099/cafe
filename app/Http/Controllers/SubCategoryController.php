@@ -76,7 +76,7 @@ class SubCategoryController extends Controller
             'id'    => 'required|exists:sub_category,id',
             'category'    => 'required|exists:category,id',
             'name'  => 'required|string|max:255',
-            'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'image' => 'nullable',
         ]);
 
         $subcategory = $this->subcategory->find($request->id);
@@ -86,6 +86,7 @@ class SubCategoryController extends Controller
         }
 
         $subcategory->name = $request->name;
+        $subcategory->category_id = $request->category;
 
         if ($request->hasFile('image')) {
 
