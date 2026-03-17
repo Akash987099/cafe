@@ -15,6 +15,32 @@
         @if ($errors->any())
             showAlert('danger', 'Validation Error!', '{{ $errors->first() }}');
         @endif
+
+        document.querySelectorAll('.table-responsive').forEach(function(wrapper) {
+            if (wrapper.dataset.gridReady === '1') {
+                return;
+            }
+
+            const table = wrapper.querySelector('table');
+            const pagination = wrapper.querySelector(':scope > .mt-4');
+
+            if (!table) {
+                return;
+            }
+
+            const scrollArea = document.createElement('div');
+            scrollArea.className = 'table-scroll-area';
+
+            wrapper.insertBefore(scrollArea, table);
+            scrollArea.appendChild(table);
+
+            if (pagination) {
+                pagination.classList.add('table-pagination-footer');
+                wrapper.appendChild(pagination);
+            }
+
+            wrapper.dataset.gridReady = '1';
+        });
     });
 </script>
 
