@@ -34,7 +34,9 @@ class Product extends Model
         'slug',
         'short_description',
         'description',
-        'similar'
+        'similar',
+        'type',
+        'type_value',
     ];
 
     public function recommendedProducts()

@@ -330,22 +330,11 @@ Route::middleware(['auth:admin'])->group(function () {
         Route::post('update-position', 'updatePosition')->name('updatePosition');
     });
 
-    Route::prefix('cafe')->name('cafe.')->group(function () {
-        Route::prefix('type')->controller(TypeController::class)->name('type.')->group(function () {
-            Route::get('', 'index')->name('index');
-            Route::get('add', 'add')->name('add');
-            Route::post('save', 'save')->name('save');
-            Route::get('edit/{id}', 'edit')->name('edit');
-            Route::post('update', 'update')->name('update');
-        });
-
-        Route::prefix('category')->controller(CafeCategoryController::class)->name('category.')->group(function () {
-            Route::get('', 'index')->name('index');
-            Route::get('add', 'add')->name('add');
-            Route::post('save', 'save')->name('save');
-            Route::get('edit/{id}', 'edit')->name('edit');
-            Route::post('update', 'update')->name('update');
-            Route::post('update-position', 'updatePosition')->name('updatePosition');
-        });
+    Route::prefix('type')->controller(TypeController::class)->name('type.')->group(function () {
+        Route::get('', 'index')->name('index');
+        Route::get('add', 'add')->name('add');
+        Route::post('save', 'save')->name('save');
+        Route::get('edit/{id}', 'edit')->name('edit');
+        Route::post('update', 'update')->name('update');
     });
 });

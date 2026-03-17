@@ -26,6 +26,50 @@ class AuthController extends Controller
 
     public function register(Request $request)
     {
+        $request->merge([
+            'email' => strtolower(trim((string) $request->email)),
+        ]);
+
+        $validator = Validator::make($request->all(), [
+            'name'     => 'required|string|max:100',
+            'email'    => 'required|email|unique:users,email',
+            'password' => 'required|min:6',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Validation error',
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+
+        if (User::where('email', $request->email)->exists()) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Email already registered',
+                'errors' => [
+                    'email' => ['This email is already registered.'],
+                ],
+            ], 422);
+        }
+
+        $user = User::create([
+            'name'         => $request->name,
+            'email'        => $request->email,
+            'phone'        => $request->phone,
+            'email_verify' => 1,
+            'password'     => Hash::make($request->password),
+        ]);
+
+        return response()->json([
+            'status' => true,
+            'message' => 'User registered successfully'
+        ], 200);
+    }
+
+    public function registerOld(Request $request)
+    {
         $validator = Validator::make($request->all(), [
             'name'     => 'required|string|max:100',
             'email'    => 'required|email',

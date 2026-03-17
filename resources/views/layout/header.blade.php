@@ -120,6 +120,8 @@
                                 href="{{ route('sub_category.index') }}"><i class="fas fa-list-ul"></i>Sub Category</a>
                             <a class="nav-link {{ request()->routeIs('brand.*') ? 'active' : '' }}"
                                 href="{{ route('brand.index') }}"><i class="fas fa-tags"></i>Brands</a>
+                            <a class="nav-link {{ request()->routeIs('type.*') ? 'active' : '' }}"
+                                href="{{ route('type.index') }}"><i class="fas fa-tags"></i>Type</a>
                             <a class="nav-link {{ request()->routeIs('discount.*') ? 'active' : '' }}"
                                 href="{{ route('discount.index') }}"><i class="fas fa-percent"></i>Discount</a>
                             <a class="nav-link {{ request()->routeIs('product.*') ? 'active' : '' }}"
@@ -218,29 +220,6 @@
 
                             <a class="nav-link {{ request()->routeIs('barcodes.*') ? 'active' : '' }}"
                                 href="{{ route('order.barcodes') }}"><i class="fas fa-truck-field"></i>Barcode</a>
-                        </div>
-                    </div>
-                </li>
-
-                <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('cafe.*') || request()->is('type*') || request()->is('category*') || request()->is('sell*') ? '' : 'collapsed' }}"
-                        data-bs-toggle="collapse" href="#sidebarCafe" role="button"
-                        aria-expanded="{{ request()->routeIs('order.*') || request()->is('type*') || request()->is('category*') || request()->is('sell*') ? 'true' : 'false' }}"
-                        aria-controls="sidebarCafe">
-                        <div
-                            class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
-                            <i class="fas fa-briefcase text-dark"></i>
-                        </div>
-                        <span class="nav-link-text ms-1">Cafe Management</span>
-                    </a>
-                    <div class="collapse {{ request()->routeIs('type.*') || request()->is('barcode*') || request()->is('demand*') || request()->is('sell*') ? 'show' : '' }}"
-                        id="sidebarCafe">
-                        <div class="side-submenu">
-                            <a class="nav-link {{ request()->routeIs('cafe.type*') ? 'active' : '' }}"
-                                href="{{ route('cafe.type.index') }}"><i class="fas fa-truck-field"></i>Type</a>
-
-                            <a class="nav-link {{ request()->routeIs('cafe.category*') ? 'active' : '' }}"
-                                href="{{ route('cafe.category.index') }}"><i class="fas fa-truck-field"></i>Category</a>
                         </div>
                     </div>
                 </li>

@@ -43,6 +43,8 @@ class ProductController extends Controller
                             'products.summer_id',
                             'products.slug',
                             'products.slug',
+                            'products.type',
+                            'products.type_value',
                             'products.category',
                             'discounts.name as discount',
                             'brands.name as brand'
@@ -113,7 +115,9 @@ class ProductController extends Controller
                     'products.category',
                     'products.short_description',
                     'discounts.name as discount',
-                    'brands.name as brand'
+                    'brands.name as brand',
+                    'products.type',
+                    'products.type_value',
                 )
                 ->get();
 
@@ -176,7 +180,9 @@ class ProductController extends Controller
                     'products.category',
                     'products.short_description',
                     'discounts.name as discount',
-                    'brands.name as brand'
+                    'brands.name as brand',
+                    'products.type',
+                    'products.type_value',
                 )
                 ->get();
 
@@ -256,7 +262,9 @@ class ProductController extends Controller
                 'products.category',
                 'products.short_description',
                 'discounts.name as discount',
-                'brands.name as brand'
+                'brands.name as brand',
+                'products.type',
+                'products.type_value',
             )
                 ->get();
 

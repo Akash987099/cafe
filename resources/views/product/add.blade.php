@@ -144,6 +144,25 @@
                                 </div>
                             </div>
 
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="vehicle_name" class="form-label">Types</label>
+                                    <select type="text" class="form-control" id="type" name="type">
+                                        <option value="">------Select Types------</option>
+                                        @foreach ($type as $key => $item)
+                                            <option value="{{$item->name}}" data-id="{{$item->id}}">{{$item->name}}</option>
+                                        @endforeach
+                                    </select>    
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="vehicle_number" class="form-label">Type Value</label>
+                                    <input type="text" class="form-control" id="type_value" name="type_value" placeholder="Enter Details">
+                                </div>
+                            </div>
+
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label for="vehicle_number" class="form-label">Short Description</label>

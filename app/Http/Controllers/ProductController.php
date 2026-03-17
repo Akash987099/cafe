@@ -11,6 +11,7 @@ use App\Models\Product;
 use Milon\Barcode\DNS1D;
 use App\Models\Gallery;
 use App\Models\Summer;
+use App\Models\Type;
 
 class ProductController extends Controller
 {
@@ -21,6 +22,7 @@ class ProductController extends Controller
     protected $product;
     protected $gallery;
     protected $summer;
+    protected $type;
 
     public function __construct()
     {
@@ -31,6 +33,7 @@ class ProductController extends Controller
         $this->product = new Product();
         $this->gallery = new Gallery();
         $this->summer = new Summer();
+        $this->type = new Type();
     }
 
 
@@ -47,7 +50,8 @@ class ProductController extends Controller
         $sub_category = $this->sub_category->all();
         $brand = $this->brand->all();
         $discount = $this->discount->all();
-        return view('product.add', compact('category', 'sub_category', 'brand', 'discount'));
+        $type = $this->type->all();
+        return view('product.add', compact('category', 'sub_category', 'brand', 'discount', 'type'));
     }
 
     private function generateUniqueAwb()
@@ -126,6 +130,8 @@ class ProductController extends Controller
         $product->sub_category = $request->sub_category;
         $product->discount = $request->discount;
         $product->brands = $request->brand;
+        $product->type = $request->type;
+        $product->type_value = $request->type_value;
         $product->description = $request->description;
         $product->short_description = $request->short_description;
         $product->image = 'product/' . $imageName;
@@ -155,7 +161,8 @@ class ProductController extends Controller
         $sub_category = $this->sub_category->all();
         $discount = $this->discount->all();
         $brand = $this->brand->all();
-        return view('product.edit', compact('product', 'category', 'sub_category', 'discount', 'brand'));
+        $type = $this->type->all();
+        return view('product.edit', compact('product', 'category', 'sub_category', 'discount', 'brand', 'type'));
     }
 
     public function update(Request $request)
@@ -185,6 +192,8 @@ class ProductController extends Controller
         $product->discount = $request->discount;
         $product->short_description = $request->short_description;
         $product->brands = $request->brand;
+        $product->type = $request->type;
+        $product->type_value = $request->type_value;
         $product->slug = $request->slug;
         $product->description = $request->description;
 

@@ -143,12 +143,31 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="vehicle_name" class="form-label">Brands</label>
-                                    <select type="text" class="form-control" id="brand" name="brand" placeholder="Enter Details" required>
+                                    <select type="text" class="form-control" id="brand" name="brand" placeholder="Enter Details">
                                         <option value="">------Select Brand------</option>
                                         @foreach ($brand as $key => $item)
                                             <option value="{{$item->id}}">{{$item->name}}</option>
                                         @endforeach
                                     </select>    
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="vehicle_name" class="form-label">Types</label>
+                                    <select type="text" class="form-control" id="type" name="type">
+                                        <option value="">------Select Types------</option>
+                                        @foreach ($type as $key => $item)
+                                            <option value="{{$item->name}}" data-id="{{$item->id}}">{{$item->name}}</option>
+                                        @endforeach
+                                    </select>    
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="vehicle_number" class="form-label">Type Value</label>
+                                    <input type="text" class="form-control" id="type_value" name="type_value" value="{{$product->type_value}}" placeholder="Enter Details">
                                 </div>
                             </div>
 
