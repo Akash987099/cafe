@@ -64,7 +64,7 @@
                             </table>
 
                             <div class="mt-4">
-                                {{ $barcodes->links('pagination::tailwind') }}
+                                {{ $barcodes->links('vendor.pagination.tailwind') }}
                             </div>
 
                         </div>

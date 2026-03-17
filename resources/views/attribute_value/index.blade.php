@@ -59,7 +59,7 @@
 
                         </table>
                         <div class="mt-4">
-                            {{ $attribute_values->links('pagination::tailwind') }}
+                            {{ $attribute_values->links('vendor.pagination.tailwind') }}
                         </div>
                     </div>
                 </div>

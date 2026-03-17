@@ -98,7 +98,7 @@
 
                         <!-- Pagination -->
                         <div class="mt-4 px-3">
-                            {{ $cms->links('pagination::tailwind') }}
+                            {{ $cms->links('vendor.pagination.tailwind') }}
                         </div>
 
                     </div>

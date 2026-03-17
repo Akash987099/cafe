@@ -53,7 +53,7 @@
                             </tbody>
                         </table>
                         <div class="mt-4">
-                            {{ $state->links('pagination::tailwind') }}
+                            {{ $state->links('vendor.pagination.tailwind') }}
                         </div>
                     </div>
                 </div>

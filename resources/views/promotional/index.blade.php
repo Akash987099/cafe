@@ -100,7 +100,7 @@
                         </table>
 
                         <div class="mt-4 px-3">
-                            {{ $promo->links('pagination::tailwind') }}
+                            {{ $promo->links('vendor.pagination.tailwind') }}
                         </div>
 
                     </div>
