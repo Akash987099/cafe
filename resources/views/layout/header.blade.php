@@ -36,74 +36,91 @@
 </head>
 
 <style>
+    :root {
+        --sidebar-width: 264px;
+        --layout-gap: 0px;
+        --topbar-height: 86px;
+        --surface-radius: 20px;
+        --surface-border: #dce6f1;
+        --surface-shadow: 0 16px 38px rgba(15, 23, 42, 0.08);
+    }
+
     body.bg-gray-100 {
-        background:
-            radial-gradient(circle at top right, rgba(191, 219, 254, 0.35), transparent 22%),
-            linear-gradient(180deg, #f4f7fb 0%, #eef3f8 100%);
+        background: #edf3fa;
+        margin: 0;
     }
 
     #sidenav-main {
-        display: flex;
-        flex-direction: column;
-        height: calc(100vh - 2rem);
+        position: fixed !important;
+        top: var(--layout-gap);
+        left: var(--layout-gap);
+        bottom: var(--layout-gap);
+        width: var(--sidebar-width);
+        height: calc(100vh - (var(--layout-gap) * 2));
         overflow: hidden;
-        border-radius: 1.2rem !important;
-    }
-
-    #sidenav-main .navbar-collapse {
-        flex: 1 1 auto;
-        display: block !important;
-        overflow-y: auto;
-        height: auto !important;
-        max-height: none;
-        min-height: 0;
-        padding-bottom: 0.75rem;
-        overscroll-behavior: contain;
-        scrollbar-width: thin;
-        /* Firefox */
+        z-index: 1030;
+        background: #ffffff !important;
+        border: 1px solid var(--surface-border) !important;
+        border-radius: 0 !important;
+        box-shadow: 0 8px 24px rgba(15, 23, 42, 0.05) !important;
+        border-top-left-radius: 0 !important;
+        border-bottom-left-radius: 0 !important;
+        border-top-right-radius: 0 !important;
+        border-bottom-right-radius: 0 !important;
     }
 
     #sidenav-main .sidenav-header {
-        padding: 1rem 1rem 0.7rem;
+        padding: 1rem 1rem 0.8rem;
     }
 
     #sidenav-main .navbar-brand {
         display: flex;
         align-items: center;
         justify-content: center;
-        min-height: 54px;
-        padding: 0.65rem;
-        border-radius: 0.95rem;
+        min-height: 64px;
+        margin: 0;
+        padding: 0.35rem 0.7rem;
+        border-radius: 0;
+        background: transparent;
     }
 
     #sidenav-main .navbar-brand-img {
-        max-height: 42px;
+        max-height: 50px;
+        width: auto;
         object-fit: contain;
-        border-radius: 0.75rem;
     }
 
     #sidenav-main hr.horizontal.dark {
-        margin: 0.25rem 1rem 0.75rem;
+        margin: 0 1rem 0.75rem;
+        background-image: none;
+        background-color: #e8eef6;
+        height: 1px;
+        opacity: 1;
     }
 
-    /* Chrome / Edge scrollbar */
+    #sidenav-main .navbar-collapse {
+        overflow-y: auto;
+        overflow-x: hidden;
+        height: calc(100vh - 150px);
+        max-height: calc(100vh - 150px);
+        overscroll-behavior-y: contain;
+        scrollbar-width: thin;
+        scrollbar-color: #c7d3e2 transparent;
+    }
+
     #sidenav-main .navbar-collapse::-webkit-scrollbar {
         width: 6px;
     }
 
     #sidenav-main .navbar-collapse::-webkit-scrollbar-thumb {
-        background-color: #cbd5e1;
-        border-radius: 10px;
+        background-color: #c7d3e2;
+        border-radius: 999px;
     }
 
     #sidenav-main .navbar-nav {
         gap: 0.2rem;
-        padding: 0 0.75rem 0;
+        padding: 0 0.75rem 0.85rem;
         margin-bottom: 0;
-    }
-
-    #sidenav-main .nav-item {
-        width: 100%;
     }
 
     #sidenav-main .nav-link {
@@ -111,78 +128,103 @@
         align-items: center;
         min-height: 46px;
         margin: 0;
-        padding: 0.7rem 0.8rem;
-        border-radius: 0.95rem;
-        transition: background-color 0.18s ease, color 0.18s ease, transform 0.18s ease;
+        padding: 0.72rem 0.85rem;
+        border-radius: 14px;
+        color: #61738f;
+        transition: background-color 0.18s ease, color 0.18s ease, box-shadow 0.18s ease;
     }
 
     #sidenav-main .nav-link:hover {
-        transform: translateX(2px);
+        background: #f5f8fd;
+        color: #24446e;
     }
 
-    #sidenav-main .nav-link.active,
-    #sidenav-main .collapse.show>.side-submenu>.nav-link.active {
-        box-shadow: inset 0 0 0 1px rgba(148, 163, 184, 0.12);
+    #sidenav-main .nav-link.active {
+        background: #f3f7ff;
+        color: #173a63;
+        box-shadow: inset 0 0 0 1px #dbe6f7;
     }
 
     #sidenav-main .icon.icon-shape {
-        width: 34px !important;
-        height: 34px !important;
-        min-width: 34px;
-        border-radius: 0.8rem !important;
-        box-shadow: none !important;
-    }
-
-    #sidenav-main .icon.icon-shape i,
-    #sidenav-main .icon.icon-shape svg,
-    #sidenav-main .icon.icon-shape .text-dark {
-        fill: currentColor !important;
+        width: 36px !important;
+        height: 36px !important;
+        min-width: 36px;
+        border-radius: 12px !important;
+        box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08) !important;
     }
 
     #sidenav-main .nav-link-text {
-        font-size: 0.8rem;
+        color: inherit !important;
+        font-size: 0.92rem;
         font-weight: 500;
-        letter-spacing: 0.01em;
     }
 
-    .side-submenu .nav-link {
-        min-height: 38px !important;
-        margin-top: 0.18rem;
-        margin-left: 0;
-        padding: 0.55rem 0.85rem 0.55rem 3rem !important;
-        border-radius: 0.8rem;
-        font-size: 0.76rem;
+    .main-content {
+        margin-left: var(--sidebar-width) !important;
+        width: calc(100% - var(--sidebar-width)) !important;
     }
 
-    .side-submenu .nav-link i {
-        width: 16px;
-        margin-right: 0.45rem;
-        text-align: center;
+    #navbarBlur {
+        position: fixed !important;
+        top: var(--layout-gap);
+        left: calc(var(--sidebar-width) - 1px);
+        right: 0;
+        z-index: 1020;
+        min-height: 70px;
+        background: #ffffff !important;
+        border: 1px solid var(--surface-border) !important;
+        border-radius: var(--surface-radius) !important;
+        box-shadow: var(--surface-shadow) !important;
+        border-top-left-radius: 0 !important;
+        border-bottom-left-radius: 0 !important;
+        border-top-right-radius: 0 !important;
+    }
+
+    #navbarBlur::before {
+        content: "";
+        position: absolute;
+        left: -18px;
+        top: -1px;
+        bottom: -1px;
+        width: 18px;
+        background: #ffffff;
+        border-top: 1px solid var(--surface-border);
+        border-bottom: 1px solid var(--surface-border);
+    }
+
+    .main-content .navbar.navbar-main {
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        width: auto !important;
+    }
+
+    #navbarBlur .container-fluid {
+        min-height: 70px;
+        align-items: center;
+    }
+
+    .main-content>.container-fluid.py-4 {
+        padding-top: calc(var(--topbar-height) + 0.5rem) !important;
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
     }
 
     .side-submenu {
-        position: relative;
-        margin: 0.2rem 0 0.5rem;
-        padding: 0.15rem 0 0.15rem 0.35rem;
+        margin: 0.15rem 0 0.45rem;
     }
 
-    .side-submenu::before {
-        content: "";
-        position: absolute;
-        top: 0.3rem;
-        bottom: 0.3rem;
-        left: 1rem;
-        width: 1px;
+    .side-submenu .nav-link {
+        min-height: 38px;
+        margin-left: 2.25rem;
+        padding: 0.55rem 0.8rem;
+        border-radius: 12px;
+        font-size: 0.8rem;
     }
 
-    #sidenav-main h6.text-uppercase {
-        font-size: 0.68rem !important;
-        letter-spacing: 0.12em;
-        margin: 0.8rem 0 0.2rem !important;
-    }
-
-    #sidenav-main .collapse.show {
-        margin-top: 0.2rem;
+    .side-submenu .nav-link i {
+        width: 15px;
+        margin-right: 0.45rem;
+        text-align: center;
     }
 
     .card {
@@ -489,7 +531,31 @@
 
     @media (max-width: 767.98px) {
         #sidenav-main {
-            border-radius: 1rem !important;
+            width: auto;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            height: 100vh;
+            border-top-right-radius: 1rem !important;
+            border-bottom-right-radius: 1rem !important;
+        }
+
+        .main-content {
+            margin-left: 0 !important;
+            width: 100% !important;
+        }
+
+        #navbarBlur {
+            left: 0;
+            right: 0;
+            top: 0;
+            margin-left: 0;
+            border-top-left-radius: 1rem !important;
+            border-bottom-left-radius: 1rem !important;
+        }
+
+        #navbarBlur::before {
+            display: none;
         }
 
         .card-header {
@@ -529,7 +595,7 @@
 
 <body class="g-sidenav-show  bg-gray-100">
     <aside
-        class="sidenav navbar navbar-vertical navbar-expand-xs overflow-hidden border-radius-xl my-3 fixed-start ms-3 border shadow-sm border-black"
+        class="sidenav navbar navbar-vertical navbar-expand-xs overflow-hidden fixed-start"
         id="sidenav-main">
         <div class="sidenav-header">
             <i class="fas fa-times p-3 cursor-pointer text-secondary opacity-5 position-absolute end-0 top-0 d-none d-xl-none"

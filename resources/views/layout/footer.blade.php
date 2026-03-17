@@ -41,6 +41,32 @@
 
             wrapper.dataset.gridReady = '1';
         });
+
+        const sideMenu = document.querySelector('#sidenav-main .navbar-collapse');
+        if (sideMenu && sideMenu.dataset.scrollLock !== '1') {
+            sideMenu.addEventListener('wheel', function(event) {
+                const maxScrollTop = Math.max(0, sideMenu.scrollHeight - sideMenu.clientHeight);
+                const isAtTop = sideMenu.scrollTop <= 0;
+                const isAtBottom = sideMenu.scrollTop >= maxScrollTop;
+
+                if ((event.deltaY < 0 && isAtTop) || (event.deltaY > 0 && isAtBottom)) {
+                    event.preventDefault();
+                }
+            }, { passive: false });
+
+            sideMenu.addEventListener('scroll', function() {
+                const maxScrollTop = Math.max(0, sideMenu.scrollHeight - sideMenu.clientHeight);
+
+                if (sideMenu.scrollTop < 0) {
+                    sideMenu.scrollTop = 0;
+                } else if (sideMenu.scrollTop > maxScrollTop) {
+                    sideMenu.scrollTop = maxScrollTop;
+                }
+            });
+
+            sideMenu.dataset.scrollLock = '1';
+        }
+
     });
 </script>
 

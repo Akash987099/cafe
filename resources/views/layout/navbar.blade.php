@@ -1,6 +1,6 @@
-<main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
+<main class="main-content position-relative max-height-vh-100 h-100">
   <!-- Navbar -->
-  <nav class="navbar navbar-main navbar-expand-lg px-0 mx-4 border mt-3 shadow-sm border-radius-xl" id="navbarBlur" navbar-scroll="true">
+  <nav class="navbar navbar-main navbar-expand-lg px-0 border shadow-sm" id="navbarBlur" navbar-scroll="true">
     <div class="container-fluid py-1 px-3">
       <nav aria-label="breadcrumb">
         <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5">
