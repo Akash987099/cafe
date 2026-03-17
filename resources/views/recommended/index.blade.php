@@ -73,7 +73,7 @@
 
                         <!-- Pagination -->
                         <div class="mt-4 px-3">
-                            {{ $recommended->links('vendor.pagination.tailwind') }}
+                            {{ $recommended->links('shared.pagination') }}
                         </div>
 
                     </div>

@@ -101,7 +101,7 @@
 
                         <!-- Pagination -->
                         <div class="mt-4 px-3">
-                            {{ $sliders->links('vendor.pagination.tailwind') }}
+                            {{ $sliders->links('shared.pagination') }}
                         </div>
 
                     </div>

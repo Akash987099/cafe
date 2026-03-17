@@ -1,1 +1,1 @@
-@include('vendor.pagination.tailwind')
+@include('shared.pagination')

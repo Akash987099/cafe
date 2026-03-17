@@ -95,7 +95,7 @@
 
                         <!-- Pagination -->
                         <div class="mt-4 px-3">
-                            {{ $summer->links('vendor.pagination.tailwind') }}
+                            {{ $summer->links('shared.pagination') }}
                         </div>
 
                     </div>

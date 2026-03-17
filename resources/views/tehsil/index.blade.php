@@ -51,7 +51,7 @@
                             </tbody>
                         </table>
                       <div class="mt-4">
-                            {{ $tehsil->links('vendor.pagination.tailwind') }}
+                            {{ $tehsil->links('shared.pagination') }}
                         </div>
                     </div>
                 </div>

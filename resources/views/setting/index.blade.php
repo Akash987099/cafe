@@ -58,7 +58,7 @@
                             </tbody>
                         </table>
                         <div class="mt-4">
-                            {{ $settings->links('vendor.pagination.tailwind') }}
+                            {{ $settings->links('shared.pagination') }}
                         </div>
                     </div>
                 </div>
