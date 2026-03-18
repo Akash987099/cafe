@@ -22,6 +22,38 @@ class BrandController extends Controller
         return view('brand.add');
     }
 
+    public function export()
+    {
+        $brands = $this->brand
+            ->orderBy('id', 'desc')
+            ->get(['name']);
+
+        $fileName = 'brands_' . now()->format('Y_m_d_H_i_s') . '.csv';
+
+        $headers = [
+            'Content-Type' => 'text/csv; charset=UTF-8',
+            'Content-Disposition' => 'attachment; filename="' . $fileName . '"',
+        ];
+
+        $callback = function () use ($brands) {
+            $file = fopen('php://output', 'w');
+
+            fprintf($file, chr(0xEF) . chr(0xBB) . chr(0xBF));
+            fputcsv($file, ['Sr No.', 'Brand Name']);
+
+            foreach ($brands as $index => $brand) {
+                fputcsv($file, [
+                    $index + 1,
+                    $brand->name,
+                ]);
+            }
+
+            fclose($file);
+        };
+
+        return response()->streamDownload($callback, $fileName, $headers);
+    }
+
     public function save(Request $request)
     {
 

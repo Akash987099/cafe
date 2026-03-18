@@ -79,6 +79,7 @@ Route::middleware(['auth:admin'])->group(function () {
 
     Route::prefix('brands')->controller(BrandController::class)->name('brand.')->group(function () {
         Route::get('', 'index')->name('index');
+        Route::get('export', 'export')->name('export');
         Route::get('add', 'add')->name('add');
         Route::post('save', 'save')->name('save');
         Route::get('edit/{id}', 'edit')->name('edit');
