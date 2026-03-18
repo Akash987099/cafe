@@ -10,6 +10,10 @@
               <i class="fas fa-xmark topbar-toggle-close"></i>
             </a>
           </div>
+          <button type="button" class="btn btn-sm mb-0 topbar-theme-toggle topbar-theme-toggle-mobile d-xl-none" data-theme-toggle aria-label="Switch to light mode" title="Switch to light mode">
+            <i class="fas fa-sun" aria-hidden="true"></i>
+            <span class="theme-toggle-text">Light</span>
+          </button>
           <nav aria-label="breadcrumb">
     <ol class="breadcrumb bg-transparent mb-1 pb-0 pt-0 px-0">
 
@@ -47,6 +51,13 @@
             </div>
 
             <ul class="navbar-nav justify-content-end align-items-center flex-row">
+              <li class="nav-item pe-2 d-flex align-items-center">
+                <button type="button" class="btn btn-sm mb-0 topbar-theme-toggle" data-theme-toggle aria-label="Switch to light mode" title="Switch to light mode">
+                  <i class="fas fa-sun" aria-hidden="true"></i>
+                  <span class="theme-toggle-text">Light Mode</span>
+                </button>
+              </li>
+
               <li class="nav-item d-flex align-items-center">
                 <a href="javascript:;" class="nav-link text-body font-weight-bold px-0 topbar-profile">
                   <span class="topbar-profile-avatar">

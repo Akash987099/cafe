@@ -1,6 +1,66 @@
 <div id="alert-container" class="fixed top-5 right-5 space-y-3 z-50"></div>
 
 <script>
+    (function() {
+        const storageKey = 'theme-mode';
+
+        function applyTheme(theme) {
+            const activeTheme = theme === 'light' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', activeTheme);
+
+            if (document.body) {
+                document.body.classList.toggle('dark-mode', activeTheme === 'dark');
+            }
+
+            const toggleButtons = document.querySelectorAll('[data-theme-toggle]');
+            if (!toggleButtons.length) {
+                return;
+            }
+
+            const switchLabel = activeTheme === 'dark' ? 'light' : 'dark';
+
+            toggleButtons.forEach(function(toggleButton) {
+                const icon = toggleButton.querySelector('i');
+                const label = toggleButton.querySelector('.theme-toggle-text');
+                const isMobileToggle = toggleButton.classList.contains('topbar-theme-toggle-mobile');
+
+                toggleButton.setAttribute('aria-label', 'Switch to ' + switchLabel + ' mode');
+                toggleButton.setAttribute('title', 'Switch to ' + switchLabel + ' mode');
+
+                if (icon) {
+                    icon.className = activeTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+                }
+
+                if (label) {
+                    if (isMobileToggle) {
+                        label.textContent = activeTheme === 'dark' ? 'Light' : 'Dark';
+                    } else {
+                        label.textContent = activeTheme === 'dark' ? 'Light Mode' : 'Dark Mode';
+                    }
+                }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            applyTheme(localStorage.getItem(storageKey) || 'dark');
+
+            const toggleButtons = document.querySelectorAll('[data-theme-toggle]');
+            if (!toggleButtons.length) {
+                return;
+            }
+
+            toggleButtons.forEach(function(toggleButton) {
+                toggleButton.addEventListener('click', function() {
+                    const currentTheme = document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
+                    const nextTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                    localStorage.setItem(storageKey, nextTheme);
+                    applyTheme(nextTheme);
+                });
+            });
+        });
+    })();
+</script>
+<script>
    // Custom function to show top-right alert box safely
         function showNotification(type, message) {
             let container = document.getElementById('custom-toast-container');
