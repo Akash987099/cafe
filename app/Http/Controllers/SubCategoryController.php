@@ -30,6 +30,40 @@ class SubCategoryController extends Controller
         return view('sub_category.add', compact('category'));
     }
 
+    public function export()
+    {
+        $subcategories = $this->subcategory
+            ->with('category')
+            ->orderBy('id', 'desc')
+            ->get();
+
+        $fileName = 'subcategories_' . now()->format('Y_m_d_H_i_s') . '.csv';
+
+        $headers = [
+            'Content-Type' => 'text/csv; charset=UTF-8',
+            'Content-Disposition' => 'attachment; filename="' . $fileName . '"',
+        ];
+
+        $callback = function () use ($subcategories) {
+            $file = fopen('php://output', 'w');
+
+            fprintf($file, chr(0xEF) . chr(0xBB) . chr(0xBF));
+            fputcsv($file, ['Sr No.', 'Category Name', 'Sub Category Name']);
+
+            foreach ($subcategories as $index => $subcategory) {
+                fputcsv($file, [
+                    $index + 1,
+                    $subcategory->category ? $subcategory->category->name : 'N/A',
+                    $subcategory->name,
+                ]);
+            }
+
+            fclose($file);
+        };
+
+        return response()->streamDownload($callback, $fileName, $headers);
+    }
+
     public function save(Request $request)
     {
         $request->validate([

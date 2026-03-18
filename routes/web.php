@@ -70,6 +70,7 @@ Route::middleware(['auth:admin'])->group(function () {
 
     Route::prefix('sub/category')->controller(SubCategoryController::class)->name('sub_category.')->group(function () {
         Route::get('', 'index')->name('index');
+        Route::get('export', 'export')->name('export');
         Route::get('add', 'add')->name('add');
         Route::post('save', 'save')->name('save');
         Route::get('edit/{id}', 'edit')->name('edit');
