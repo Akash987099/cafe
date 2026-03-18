@@ -64,6 +64,7 @@ Route::middleware(['auth:admin'])->group(function () {
         Route::get('edit/{id}', 'edit')->name('edit');
         Route::post('update', 'update')->name('update');
         Route::post('update-position', 'updatePosition')->name('updatePosition');
+        Route::post('status', 'status')->name('status');
     });
 
     Route::prefix('sub/category')->controller(SubCategoryController::class)->name('sub_category.')->group(function () {

@@ -24,7 +24,7 @@ class CategoryController extends Controller
 
     public function category()
     {
-        $category = $this->category->orderBy('position', 'asc')->select('id', 'name', 'image')->get();
+        $category = $this->category->orderBy('position', 'asc')->where('status', 1)->select('id', 'name', 'image')->get();
 
         if (!$category) {
             return response()->json([
@@ -54,6 +54,7 @@ class CategoryController extends Controller
                     }]);
             }])
             ->orderBy('position', 'asc')
+            ->where('status', 1)
             ->select('id', 'name', 'image')
             ->get();
 
@@ -93,6 +94,7 @@ class CategoryController extends Controller
                     }]);
             }])
             ->orderBy('position', 'desc')
+            ->where('status', 1)
             ->select('id', 'name', 'image')
             ->first();
 

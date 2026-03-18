@@ -26,6 +26,8 @@
                                         Sr No.</th>
                                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
                                         Name</th>
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
+                                        Status</th>
                                     <th class="text-secondary opacity-7">Action</th>
                                 </tr>
                             </thead>
@@ -39,6 +41,20 @@
 
                                         <td>
                                             <p class="text-xs font-weight-bold mb-0">{{ $item->name }}</p>
+                                        </td>
+
+                                        <td>
+                                            <select name="status" class="form-control text-xs font-weight-bold select_top">
+                                                <option value="">Select</option>
+                                                <option value="1" data-id="{{ $item->id }}"
+                                                    {{ $item->status == 1 ? 'selected' : '' }}>
+                                                    Active
+                                                </option>
+                                                 <option value="0" data-id="{{ $item->id }}"
+                                                    {{ $item->status == 0 ? 'selected' : '' }}>
+                                                    InActive
+                                                </option>
+                                            </select>
                                         </td>
 
                                         <td>
@@ -85,5 +101,47 @@
                 });
             }
         });
+
+        $('.select_top').on('change', function() {
+
+                var product_id = $(this).find(':selected').data('id');
+                var value = $(this).val();
+
+                // console.log(product_id, value);
+
+                $.ajax({
+                    url: "{{ route('category.status') }}",
+                    type: "POST",
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        id: product_id,
+                        status: value,
+                    },
+                    success: function(res) {
+                        console.log(res.message);
+                        $.notify({
+                            message: res.message || 'Status updated successfully'
+                        }, {
+                            type: 'success',
+                            placement: {
+                                from: "top",
+                                align: "right"
+                            }
+                        });
+                    },
+                    error: function(xhr) {
+                        console.log(xhr.responseText);
+                        $.notify({
+                            message: 'Something went wrong'
+                        }, {
+                            type: 'danger',
+                            placement: {
+                                from: "top",
+                                align: "right"
+                            }
+                        });
+                    }
+                });
+            });
     </script>
 @endsection

@@ -116,4 +116,33 @@ class CategoryController extends Controller
             'message' => 'Category order updated successfully'
         ]);
     }
+
+    public function status(Request $request)
+    {
+        $status = $request->value;
+        $id = $request->id;
+
+        if (empty($id)) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'ID not found'
+            ], 400);
+        }
+
+        $category = $this->category->find($id);
+
+        if (!$category) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Record not found'
+            ], 404);
+        }
+
+        $category->status = $category->status == 1 ? 0 : 1;
+        $category->save();
+
+        return response()->json([
+            'status'    => 'success',
+        ], 200);
+    }
 }
