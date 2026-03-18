@@ -102,11 +102,12 @@
                         status: value,
                     },
                     success: function(res) {
-                        console.log(res.message);
+                        // console.log(res.message);
+                        showNotification('success', res.message || 'Status updated successfully');
                     },
                     error: function(xhr) {
-                        console.log(xhr.responseText);
-                        alert('Something went wrong');
+                        // console.log(xhr.responseText);
+                        showNotification('danger', 'Something went wrong');
                     }
                 });
             });

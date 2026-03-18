@@ -71,3 +71,27 @@ if (!function_exists('send_whatsapp_otp')) {
         }
     }
 }
+
+
+if (!function_exists('generateBreadcrumb')) {
+    function generateBreadcrumb()
+    {
+        $routeName = request()->route()->getName();
+
+        $segments = explode('.', $routeName);
+
+        $breadcrumb = [];
+        $url = url('/');
+
+        foreach ($segments as $segment) {
+            $url .= '/' . $segment;
+
+            $breadcrumb[] = [
+                'name' => ucfirst(str_replace('_', ' ', $segment)),
+                'url' => $url
+            ];
+        }
+
+        return $breadcrumb;
+    }
+}

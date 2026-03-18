@@ -4,16 +4,17 @@
     <div class="row">
         <div class="col-12">
             <div class="card mb-4">
-                <div class="card-header pb-0 d-flex justify-content-between align-items-center">
-                    <h6 class="m-0">Category</h6>
+                <div class="card-header pb-0 d-flex justify-content-between align-items-center category-card-header">
+                    <div class="category-card-header-top">
+                        <h6 class="m-0">Category</h6>
 
-                    <div class="d-flex align-items-center gap-2">
-                        <a href="{{ route('category.add') }}" class="btn btn-primary btn-sm">
+                        <a href="{{ route('category.add') }}" class="btn btn-primary btn-sm category-card-add-btn">
                             + Add
                         </a>
-                        <input type="text" id="searchInput" placeholder="Search..."
-                            class="py-2  border border-gray-300 rounded-lg h-6 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
                     </div>
+
+                    <input type="text" id="searchInput" placeholder="Search..."
+                        class="py-2 border border-gray-300 rounded-lg h-6 dark:bg-gray-700 dark:border-gray-600 dark:text-white card-header-search">
                 </div>
 
                 <div class="card-body px-0 pt-0 pb-2">
@@ -78,6 +79,7 @@
     </div>
 
     <script>
+       
         $("#sortable-category").sortable({
             handle: '.drag-handle',
             update: function() {
@@ -97,6 +99,11 @@
                     },
                     success: function(res) {
                         console.log(res.message);
+                        showNotification('success', res.message || 'Position updated successfully');
+                    },
+                    error: function(xhr) {
+                        console.log(xhr.responseText);
+                        showNotification('danger', 'Failed to update position');
                     }
                 });
             }
@@ -119,27 +126,11 @@
                     },
                     success: function(res) {
                         console.log(res.message);
-                        $.notify({
-                            message: res.message || 'Status updated successfully'
-                        }, {
-                            type: 'success',
-                            placement: {
-                                from: "top",
-                                align: "right"
-                            }
-                        });
+                        showNotification('success', res.message || 'Status updated successfully');
                     },
                     error: function(xhr) {
                         console.log(xhr.responseText);
-                        $.notify({
-                            message: 'Something went wrong'
-                        }, {
-                            type: 'danger',
-                            placement: {
-                                from: "top",
-                                align: "right"
-                            }
-                        });
+                        showNotification('danger', 'Something went wrong');
                     }
                 });
             });

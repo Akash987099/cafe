@@ -5,21 +5,38 @@
       <div class="topbar-shell w-100">
         <div class="topbar-title">
           <div class="topbar-mobile-toggle d-xl-none">
-            <a href="javascript:;" class="nav-link text-body p-0" id="iconNavbarSidenav">
-              <div class="sidenav-toggler-inner">
-                <i class="sidenav-toggler-line"></i>
-                <i class="sidenav-toggler-line"></i>
-                <i class="sidenav-toggler-line"></i>
-              </div>
+            <a href="javascript:;" class="nav-link text-body p-0" id="iconNavbarSidenav" aria-label="Toggle sidebar" aria-controls="sidenav-main" aria-expanded="false">
+              <i class="fas fa-bars topbar-toggle-open"></i>
+              <i class="fas fa-xmark topbar-toggle-close"></i>
             </a>
           </div>
           <nav aria-label="breadcrumb">
-            <ol class="breadcrumb bg-transparent mb-1 pb-0 pt-0 px-0">
-              <li class="breadcrumb-item text-sm"><a class="opacity-6 text-dark" href="{{ route('index') }}">Admin</a></li>
-              <li class="breadcrumb-item text-sm text-dark active" aria-current="page">Dashboard</li>
-            </ol>
-            <h6 class="font-weight-bolder mb-0">Dashboard Overview</h6>
-          </nav>
+    <ol class="breadcrumb bg-transparent mb-1 pb-0 pt-0 px-0">
+
+        <li class="breadcrumb-item text-sm">
+            <a class="opacity-6 text-dark" href="{{ route('index') }}">Admin</a>
+        </li>
+
+        @foreach(generateBreadcrumb() as $key => $crumb)
+            <li class="breadcrumb-item text-sm {{ $loop->last ? 'text-dark active' : '' }}">
+                
+                @if(!$loop->last)
+                    <a class="opacity-6 text-dark" href="{{ $crumb['url'] }}">
+                        {{ $crumb['name'] }}
+                    </a>
+                @else
+                    {{ $crumb['name'] }}
+                @endif
+
+            </li>
+        @endforeach
+
+    </ol>
+
+    <h6 class="font-weight-bolder mb-0">
+        {{ ucfirst(last(explode('.', request()->route()->getName()))) }}
+    </h6>
+</nav>
         </div>
 
         <div class="collapse navbar-collapse mt-0" id="navbar">
@@ -137,6 +154,88 @@
           $(this).closest('li').addClass('active');
         }
       });
+
+      const body = document.body;
+      const toggleButton = document.getElementById('iconNavbarSidenav');
+      const closeButton = document.getElementById('iconSidenav');
+      const backdrop = document.getElementById('sidenav-backdrop');
+      const mobileBreakpoint = window.matchMedia('(max-width: 1199.98px)');
+
+      function syncMobileSidenavState() {
+        if (!toggleButton) {
+          return;
+        }
+
+        const isOpen = mobileBreakpoint.matches && body.classList.contains('g-sidenav-pinned');
+        toggleButton.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+      }
+
+      function openMobileSidenav() {
+        if (!mobileBreakpoint.matches) {
+          return;
+        }
+
+        body.classList.add('g-sidenav-pinned');
+        syncMobileSidenavState();
+      }
+
+      function closeMobileSidenav() {
+        if (!mobileBreakpoint.matches) {
+          return;
+        }
+
+        body.classList.remove('g-sidenav-pinned');
+        syncMobileSidenavState();
+      }
+
+      function toggleMobileSidenav(event) {
+        if (!mobileBreakpoint.matches) {
+          return;
+        }
+
+        event.preventDefault();
+        event.stopPropagation();
+
+        if (body.classList.contains('g-sidenav-pinned')) {
+          closeMobileSidenav();
+          return;
+        }
+
+        openMobileSidenav();
+      }
+
+      if (toggleButton) {
+        toggleButton.addEventListener('click', toggleMobileSidenav, true);
+      }
+
+      if (closeButton) {
+        closeButton.addEventListener('click', function(event) {
+          event.preventDefault();
+          closeMobileSidenav();
+        });
+      }
+
+      if (backdrop) {
+        backdrop.addEventListener('click', closeMobileSidenav);
+      }
+
+      document.querySelectorAll('#sidenav-main .nav-link').forEach(function(link) {
+        link.addEventListener('click', function() {
+          if (!this.hasAttribute('data-bs-toggle')) {
+            closeMobileSidenav();
+          }
+        });
+      });
+
+      window.addEventListener('resize', function() {
+        if (!mobileBreakpoint.matches) {
+          body.classList.remove('g-sidenav-pinned');
+        }
+
+        syncMobileSidenavState();
+      });
+
+      syncMobileSidenavState();
     });
   </script>
   

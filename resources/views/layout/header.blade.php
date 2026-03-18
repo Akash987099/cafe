@@ -322,6 +322,29 @@
         border-radius: 12px;
         background: #ffffff;
         border: 1px solid #dbe4ef;
+        color: #24446e !important;
+        position: relative;
+        font-size: 1rem;
+    }
+
+    .topbar-mobile-toggle .nav-link i {
+        position: absolute;
+        transition: opacity 0.18s ease, transform 0.18s ease;
+    }
+
+    .topbar-mobile-toggle .topbar-toggle-close {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+
+    body.g-sidenav-pinned .topbar-mobile-toggle .topbar-toggle-open {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+
+    body.g-sidenav-pinned .topbar-mobile-toggle .topbar-toggle-close {
+        opacity: 1;
+        transform: scale(1);
     }
 
     .topbar-title .breadcrumb-item,
@@ -532,6 +555,41 @@
         min-width: 180px;
         max-width: 240px;
         margin: 0 !important;
+    }
+
+    .card-header-toolbar {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: flex-end !important;
+        gap: 0.55rem !important;
+        width: auto !important;
+        margin-left: auto !important;
+        flex: 0 0 auto;
+    }
+
+    .card-header-search {
+        width: min(100%, 220px);
+    }
+
+    .category-card-header {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        flex-wrap: nowrap !important;
+        gap: 0.75rem;
+    }
+
+    .category-card-header-top {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 0.75rem;
+        width: auto;
+        flex: 0 1 auto;
+    }
+
+    .category-card-add-btn {
+        flex: 0 0 auto;
     }
 
     .card-header a.btn,
@@ -781,11 +839,22 @@
         margin-top: 0.75rem !important;
     }
 
-    @media (max-width: 767.98px) {
+    .sidenav-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(15, 23, 42, 0.38);
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+        transition: opacity 0.22s ease, visibility 0.22s ease;
+        z-index: 1035;
+    }
+
+    @media (max-width: 1199.98px) {
         #sidenav-main {
-            width: auto;
-            min-width: 0;
-            max-width: 100%;
+            width: min(280px, 86vw);
+            min-width: min(280px, 86vw);
+            max-width: min(280px, 86vw);
             left: 0;
             top: 0;
             bottom: 0;
@@ -793,6 +862,24 @@
             border-right: 1px solid var(--surface-border) !important;
             border-top-right-radius: 1rem !important;
             border-bottom-right-radius: 1rem !important;
+            transform: translateX(-100%) !important;
+            transition: transform 0.24s ease;
+            box-shadow: 0 18px 45px rgba(15, 23, 42, 0.18) !important;
+            z-index: 1045;
+        }
+
+        body.g-sidenav-pinned {
+            overflow: hidden;
+        }
+
+        body.g-sidenav-pinned #sidenav-main {
+            transform: translateX(0) !important;
+        }
+
+        body.g-sidenav-pinned .sidenav-backdrop {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
         }
 
         .main-content {
@@ -813,35 +900,31 @@
             display: none;
         }
 
-        .topbar-shell,
+        .topbar-shell {
+            flex-direction: row;
+            align-items: center;
+        }
+
         .topbar-actions {
-            flex-direction: column;
-            align-items: stretch;
+            width: auto;
+            margin-left: auto;
         }
 
         .topbar-title {
             width: 100%;
+            min-width: 0;
         }
 
         .topbar-actions .navbar-nav {
-            justify-content: space-between;
+            justify-content: flex-end;
         }
 
         .topbar-search {
-            width: 100%;
+            display: none;
         }
 
-        .card-header {
-            align-items: flex-start;
-            flex-direction: column;
-            flex-wrap: wrap;
-        }
-
-        .card-header>.d-flex,
-        .card-header .d-flex.align-items-center {
-            width: 100%;
-            margin-left: 0;
-            flex-wrap: wrap !important;
+        .topbar-profile-copy {
+            display: none;
         }
 
         .table-responsive {
@@ -863,6 +946,119 @@
             flex-direction: column;
         }
     }
+
+    @media (max-width: 767.98px) {
+        #navbarBlur .container-fluid {
+            padding-left: 0.9rem !important;
+            padding-right: 0.9rem !important;
+        }
+
+        .topbar-title .breadcrumb {
+            display: none;
+        }
+
+        .topbar-title h6 {
+            font-size: 0.92rem;
+            margin-bottom: 0;
+        }
+
+        .topbar-actions .navbar-nav {
+            gap: 0.45rem;
+        }
+
+        .main-content>.container-fluid.py-4 {
+            padding-left: 0.9rem !important;
+            padding-right: 0.9rem !important;
+        }
+
+        .card-header {
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            justify-content: flex-start;
+            flex-wrap: nowrap;
+            padding: 0.9rem !important;
+            gap: 0.75rem;
+        }
+
+        .card-header h6 {
+            min-height: auto;
+            width: 100%;
+            font-size: 0.76rem;
+        }
+
+        .category-card-header {
+            gap: 0.6rem;
+        }
+
+        .category-card-header-top {
+            gap: 0.6rem;
+        }
+
+        .category-card-header-top .card-header h6,
+        .category-card-header-top h6 {
+            width: auto;
+            flex: 1 1 auto;
+            margin-bottom: 0;
+        }
+
+        .card-header-toolbar,
+        .card-header>.d-flex,
+        .card-header .d-flex.align-items-center {
+            display: grid !important;
+            grid-template-columns: minmax(0, 1fr);
+            align-items: stretch !important;
+            gap: 0.55rem !important;
+            width: 100%;
+            margin-left: 0 !important;
+            flex: 0 0 auto;
+            padding: 0.55rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.75rem;
+            background: #f8fbff;
+        }
+
+        .category-card-add-btn {
+            width: auto !important;
+            min-width: 4.6rem;
+            justify-self: end;
+        }
+
+        .card-header .btn-sm,
+        .card-header .btn {
+            min-height: 2.35rem;
+            padding-left: 0.85rem;
+            padding-right: 0.85rem;
+            border-radius: 0.65rem;
+        }
+
+        .card-header-toolbar .btn-sm,
+        .card-header-toolbar .btn,
+        .card-header>.d-flex .btn-sm,
+        .card-header>.d-flex .btn,
+        .card-header .d-flex.align-items-center .btn-sm,
+        .card-header .d-flex.align-items-center .btn {
+            width: 100%;
+        }
+
+        .card-header-search,
+        .card-header input[type="text"],
+        .card-header input[type="search"],
+        #searchInput {
+            width: 100% !important;
+            min-width: 0 !important;
+            max-width: none !important;
+            min-height: 2.35rem;
+            border-radius: 0.65rem !important;
+            font-size: 0.72rem;
+        }
+
+        .table thead th {
+            font-size: 0.64rem !important;
+            padding-top: 0.65rem !important;
+            padding-bottom: 0.65rem !important;
+        }
+    }
 </style>
 
 
@@ -871,7 +1067,7 @@
         class="sidenav overflow-hidden"
         id="sidenav-main">
         <div class="sidenav-header">
-            <i class="fas fa-times p-3 cursor-pointer text-secondary opacity-5 position-absolute end-0 top-0 d-none d-xl-none"
+            <i class="fas fa-times p-3 cursor-pointer text-secondary opacity-5 position-absolute end-0 top-0 d-xl-none"
                 aria-hidden="true" id="iconSidenav"></i>
             <div class="sidebar-brand-panel">
                 <a class="navbar-brand m-0" href="{{ route('index') }}">
@@ -1237,3 +1433,4 @@
         </div>
 
     </aside>
+    <div class="sidenav-backdrop d-xl-none" id="sidenav-backdrop"></div>

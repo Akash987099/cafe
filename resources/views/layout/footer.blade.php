@@ -1,6 +1,36 @@
 <div id="alert-container" class="fixed top-5 right-5 space-y-3 z-50"></div>
 
 <script>
+   // Custom function to show top-right alert box safely
+        function showNotification(type, message) {
+            let container = document.getElementById('custom-toast-container');
+            if (!container) {
+                container = document.createElement('div');
+                container.id = 'custom-toast-container';
+                container.style.cssText = 'position: fixed; top: 20px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; pointer-events: none;';
+                document.body.appendChild(container);
+            }
+
+            const alertBox = document.createElement('div');
+            const bgColor = type === 'success' ? '#2dce89' : '#f5365c';
+            alertBox.style.cssText = `background-color: ${bgColor}; color: white; padding: 15px 20px; border-radius: 5px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); font-family: sans-serif; font-size: 14px; opacity: 0; transform: translateX(100%); transition: all 0.3s ease-in-out; display: inline-block; pointer-events: auto;`;
+            alertBox.innerHTML = `<strong>${type === 'success' ? 'Success!' : 'Error!'}</strong> &nbsp; ${message}`;
+            
+            container.appendChild(alertBox);
+
+            setTimeout(() => {
+                alertBox.style.opacity = '1';
+                alertBox.style.transform = 'translateX(0)';
+            }, 10);
+
+            setTimeout(() => {
+                alertBox.style.opacity = '0';
+                alertBox.style.transform = 'translateX(100%)';
+                setTimeout(() => alertBox.remove(), 300);
+            }, 3000);
+        }
+</script>
+<script>
     document.addEventListener('DOMContentLoaded', function() {
         @if (session('success'))
             showAlert('success', 'Success!', "{{ session('success') }}");
