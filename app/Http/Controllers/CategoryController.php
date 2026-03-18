@@ -25,6 +25,40 @@ class CategoryController extends Controller
         return view('category.add');
     }
 
+    public function export()
+    {
+        $categories = $this->category
+            ->orderBy('position', 'asc')
+            ->orderBy('id', 'asc')
+            ->get(['name', 'status']);
+
+        $fileName = 'categories_' . now()->format('Y_m_d_H_i_s') . '.csv';
+
+        $headers = [
+            'Content-Type' => 'text/csv; charset=UTF-8',
+            'Content-Disposition' => 'attachment; filename="' . $fileName . '"',
+        ];
+
+        $callback = function () use ($categories) {
+            $file = fopen('php://output', 'w');
+
+            fprintf($file, chr(0xEF) . chr(0xBB) . chr(0xBF));
+            fputcsv($file, ['Sr No.', 'Category Name', 'Status']);
+
+            foreach ($categories as $index => $category) {
+                fputcsv($file, [
+                    $index + 1,
+                    $category->name,
+                    (int) $category->status === 1 ? 'Active' : 'InActive',
+                ]);
+            }
+
+            fclose($file);
+        };
+
+        return response()->streamDownload($callback, $fileName, $headers);
+    }
+
     public function save(Request $request)
     {
 
