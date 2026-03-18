@@ -4,16 +4,17 @@
     <div class="row">
         <div class="col-12">
             <div class="card mb-4">
-                <div class="card-header pb-0 d-flex justify-content-between align-items-center">
-                    <h6 class="m-0">Types</h6>
+                <div class="card-header pb-0 d-flex justify-content-between align-items-center category-card-header">
+                    <div class="category-card-header-top">
+                        <h6 class="m-0">Types</h6>
 
-                    <div class="d-flex align-items-center gap-2">
-                        <a href="{{ route('type.add') }}" class="btn btn-primary btn-sm">
+                        <a href="{{ route('type.add') }}" class="btn btn-primary btn-sm category-card-add-btn">
                             + Add
                         </a>
-                        <input type="text" id="searchInput" placeholder="Search..."
-                            class="py-2  border border-gray-300 rounded-lg h-6 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
                     </div>
+
+                    <input type="text" id="searchInput" placeholder="Search..."
+                        class="py-2 border border-gray-300 rounded-lg h-6 dark:bg-gray-700 dark:border-gray-600 dark:text-white card-header-search">
                 </div>
 
                 <div class="card-body px-0 pt-0 pb-2">

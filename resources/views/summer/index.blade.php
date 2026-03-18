@@ -5,17 +5,17 @@
         <div class="col-12">
             <div class="card mb-4">
 
-                <div class="card-header pb-0 d-flex justify-content-between align-items-center">
-                    <h6 class="m-0">Summer</h6>
+                <div class="card-header pb-0 d-flex justify-content-between align-items-center category-card-header">
+                    <div class="category-card-header-top">
+                        <h6 class="m-0">Summer</h6>
 
-                    <div class="d-flex gap-2">
-                        <a href="{{ route('summer.add') }}" class="btn btn-primary btn-sm">
+                        <a href="{{ route('summer.add') }}" class="btn btn-primary btn-sm category-card-add-btn">
                             + Add
                         </a>
-
-                        <input type="text" id="searchInput" placeholder="Search..." class="form-control form-control-sm"
-                            style="width:200px;">
                     </div>
+
+                    <input type="text" id="searchInput" placeholder="Search..."
+                        class="form-control form-control-sm card-header-search">
                 </div>
 
                 <div class="card-body px-0 pt-0 pb-2">
