@@ -45,10 +45,20 @@
 
         <div class="collapse navbar-collapse mt-0" id="navbar">
           <div class="topbar-actions ms-auto">
-            <div class="topbar-search">
+            <form class="topbar-search" method="GET" action="{{ route('product.index') }}">
               <i class="fas fa-search" aria-hidden="true"></i>
-              <input type="text" class="form-control" placeholder="Search orders, users, products...">
-            </div>
+              <input
+                type="text"
+                class="form-control"
+                id="topbarProductSearch"
+                name="q"
+                value="{{ request('q') }}"
+                placeholder="Search products..."
+                autocomplete="off"
+                data-product-search-input="true"
+                data-search-url="{{ route('product.search') }}">
+              <div class="topbar-search-results" id="topbarProductSearchResults" data-product-search-results="true"></div>
+            </form>
 
             <ul class="navbar-nav justify-content-end align-items-center flex-row">
               <li class="nav-item pe-2 d-flex align-items-center">
@@ -247,6 +257,156 @@
       });
 
       syncMobileSidenavState();
+
+      if (!window.topbarProductSearchBound) {
+        window.topbarProductSearchBound = true;
+
+        const $searchForm = $('.topbar-search');
+        const $searchInput = $('#topbarProductSearch');
+        const $searchResults = $('#topbarProductSearchResults');
+        let searchTimer = null;
+        let activeRequest = null;
+        const minimumCharacters = 3;
+
+        function escapeHtml(value) {
+          return String(value)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
+        }
+
+        function showSearchMessage(message) {
+          if (!$searchResults.length) {
+            return;
+          }
+
+          $searchResults
+            .html('<div class="topbar-search-state">' + escapeHtml(message) + '</div>')
+            .addClass('is-visible');
+        }
+
+        function hideSearchResults() {
+          if (!$searchResults.length) {
+            return;
+          }
+
+          $searchResults.removeClass('is-visible').empty();
+        }
+
+        function renderSearchResults(products) {
+          if (!products.length) {
+            showSearchMessage('No record found.');
+            return;
+          }
+
+          const items = products.map(function(product) {
+            const metaParts = [];
+
+            if (product.sku_product_id) {
+              metaParts.push('ID: ' + escapeHtml(product.sku_product_id));
+            }
+
+            if (product.sku_code) {
+              metaParts.push('SKU: ' + escapeHtml(product.sku_code));
+            }
+
+            return (
+              '<a class="topbar-search-result-item" href="' + escapeHtml(product.edit_url) + '">' +
+                '<span class="topbar-search-result-title">' + escapeHtml(product.name) + '</span>' +
+                '<span class="topbar-search-result-meta">' + (metaParts.join(' | ') || 'Open edit page') + '</span>' +
+              '</a>'
+            );
+          }).join('');
+
+          $searchResults.html(items).addClass('is-visible');
+        }
+
+        function requestProductSearch(query) {
+          const searchUrl = $searchInput.data('search-url');
+
+          if (!searchUrl) {
+            showSearchMessage('Search route not available.');
+            return;
+          }
+
+          if (activeRequest && activeRequest.readyState !== 4) {
+            activeRequest.abort();
+          }
+
+          showSearchMessage('Searching...');
+
+          activeRequest = $.ajax({
+            url: searchUrl,
+            type: 'GET',
+            dataType: 'json',
+            data: { q: query }
+          }).done(function(response) {
+            renderSearchResults(Array.isArray(response.data) ? response.data : []);
+          }).fail(function(xhr, status) {
+            if (status === 'abort') {
+              return;
+            }
+
+            showSearchMessage('Search failed. Please try again.');
+          });
+        }
+
+        if ($searchInput.length && $searchResults.length) {
+          $searchInput.on('focus', function() {
+            const query = ($(this).val() || '').trim();
+
+            if (query.length < minimumCharacters) {
+              showSearchMessage('Enter at least 3 characters.');
+              return;
+            }
+
+            if ($searchResults.html().trim() !== '') {
+              $searchResults.addClass('is-visible');
+            }
+          });
+
+          $searchInput.on('input', function() {
+            const query = ($(this).val() || '').trim();
+            clearTimeout(searchTimer);
+
+            if (query.length < minimumCharacters) {
+              showSearchMessage('Enter at least 3 characters.');
+              return;
+            }
+
+            searchTimer = setTimeout(function() {
+              requestProductSearch(query);
+            }, 250);
+          });
+
+          $searchInput.on('keydown', function(event) {
+            if (event.key !== 'Enter') {
+              return;
+            }
+
+            const firstResult = $searchResults.find('.topbar-search-result-item').first();
+            if (firstResult.length && $searchResults.hasClass('is-visible')) {
+              event.preventDefault();
+              window.location.href = firstResult.attr('href');
+            }
+          });
+
+          $(document).on('click.topbarProductSearch', function(event) {
+            if (!$(event.target).closest('.topbar-search').length) {
+              hideSearchResults();
+            }
+          });
+
+          $searchForm.on('submit', function() {
+            const query = ($searchInput.val() || '').trim();
+            if (query.length === 0) {
+              return false;
+            }
+          });
+        }
+      }
     });
   </script>
   

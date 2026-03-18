@@ -27,7 +27,7 @@
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="{{ asset('assets/js/message.js') }}"></script>
-    <script src="{{ asset('assets/js/search.js') }}"></script>
+    <script src="{{ asset('assets/js/search.js') }}?v={{ @filemtime(public_path('assets/js/search.js')) }}"></script>
     <script src="{{ asset('assets/js/delete.js') }}"></script>
     <script src="{{ asset('assets/js/common.js') }}"></script>
     <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -462,11 +462,13 @@
         justify-content: flex-end;
         gap: 1rem;
         width: 100%;
+        overflow: visible;
     }
 
     .topbar-search {
         position: relative;
         width: min(100%, 360px);
+        overflow: visible;
     }
 
     .topbar-search i {
@@ -490,6 +492,64 @@
     .topbar-search .form-control:focus {
         border-color: #99b7e0;
         box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.08);
+    }
+
+    .topbar-search-results {
+        position: absolute;
+        top: calc(100% + 0.45rem);
+        left: 0;
+        right: 0;
+        display: none;
+        padding: 0.35rem;
+        background: #ffffff;
+        border: 1px solid #dbe4ef;
+        border-radius: 14px;
+        box-shadow: 0 18px 40px rgba(15, 23, 42, 0.14);
+        z-index: 1060;
+    }
+
+    .topbar-search-results.is-visible {
+        display: block;
+    }
+
+    #navbar,
+    #navbarBlur,
+    .navbar-main,
+    .navbar-main .container-fluid,
+    .topbar-shell {
+        overflow: visible !important;
+    }
+
+    .topbar-search-result-item,
+    .topbar-search-state {
+        display: flex;
+        flex-direction: column;
+        gap: 0.18rem;
+        width: 100%;
+        padding: 0.7rem 0.85rem;
+        border-radius: 10px;
+    }
+
+    .topbar-search-result-item {
+        text-decoration: none;
+        transition: background-color 0.18s ease;
+    }
+
+    .topbar-search-result-item:hover {
+        background: #f4f8fc;
+    }
+
+    .topbar-search-result-title {
+        color: #1e293b;
+        font-size: 0.84rem;
+        font-weight: 700;
+    }
+
+    .topbar-search-result-meta,
+    .topbar-search-state {
+        color: #64748b;
+        font-size: 0.74rem;
+        font-weight: 500;
     }
 
     .topbar-actions .navbar-nav {
@@ -1057,6 +1117,30 @@
     body.dark-mode .topbar-search .form-control:focus {
         border-color: #3b82f6;
         box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.18);
+    }
+
+    html[data-theme="dark"] .topbar-search-results,
+    body.dark-mode .topbar-search-results {
+        background: #111827;
+        border-color: #334155;
+        box-shadow: 0 18px 44px rgba(2, 6, 23, 0.45);
+    }
+
+    html[data-theme="dark"] .topbar-search-result-item:hover,
+    body.dark-mode .topbar-search-result-item:hover {
+        background: #1e293b;
+    }
+
+    html[data-theme="dark"] .topbar-search-result-title,
+    body.dark-mode .topbar-search-result-title {
+        color: #e2e8f0;
+    }
+
+    html[data-theme="dark"] .topbar-search-result-meta,
+    html[data-theme="dark"] .topbar-search-state,
+    body.dark-mode .topbar-search-result-meta,
+    body.dark-mode .topbar-search-state {
+        color: #94a3b8;
     }
 
     html[data-theme="dark"] .topbar-profile-copy small,

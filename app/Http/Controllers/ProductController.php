@@ -40,8 +40,63 @@ class ProductController extends Controller
     public function index()
     {
         $summer = $this->summer->all();
-        $products = $this->product->orderBy('id', 'desc')->paginate(config('constants.pagination_limit'));
+        $keyword = trim((string) request('q', ''));
+
+        $productsQuery = $this->product->orderBy('id', 'desc');
+
+        if ($keyword !== '') {
+            $productsQuery->where(function ($query) use ($keyword) {
+                $query->where('name', 'LIKE', "%{$keyword}%")
+                    ->orWhere('sku_product_id', 'LIKE', "%{$keyword}%")
+                    ->orWhere('sku_code', 'LIKE', "%{$keyword}%")
+                    ->orWhere('tags', 'LIKE', "%{$keyword}%");
+            });
+        }
+
+        $products = $productsQuery
+            ->paginate(config('constants.pagination_limit'))
+            ->appends(['q' => $keyword]);
+
         return view('product.index', compact('products', 'summer'));
+    }
+
+    public function search(Request $request)
+    {
+        $keyword = trim((string) $request->get('q', ''));
+
+        if ($keyword === '') {
+            return response()->json([
+                'status' => 'success',
+                'data' => [],
+            ]);
+        }
+
+        $products = $this->product
+            ->select('id', 'name', 'sku_product_id', 'sku_code')
+            ->where(function ($query) use ($keyword) {
+                $query->where('name', 'LIKE', "%{$keyword}%")
+                    ->orWhere('sku_product_id', 'LIKE', "%{$keyword}%")
+                    ->orWhere('sku_code', 'LIKE', "%{$keyword}%")
+                    ->orWhere('tags', 'LIKE', "%{$keyword}%");
+            })
+            ->orderBy('name')
+            ->limit(8)
+            ->get()
+            ->map(function ($product) {
+                return [
+                    'id' => $product->id,
+                    'name' => $product->name,
+                    'sku_product_id' => $product->sku_product_id,
+                    'sku_code' => $product->sku_code,
+                    'edit_url' => route('product.edit', $product->id),
+                ];
+            })
+            ->values();
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $products,
+        ]);
     }
 
     public function add()

@@ -93,6 +93,7 @@ Route::middleware(['auth:admin'])->group(function () {
 
     Route::prefix('products')->controller(ProductController::class)->name('product.')->group(function () {
         Route::get('', 'index')->name('index');
+        Route::get('search', 'search')->name('search');
         Route::get('add', 'add')->name('add');
         Route::post('save', 'save')->name('save');
         Route::get('edit/{id}', 'edit')->name('edit');
