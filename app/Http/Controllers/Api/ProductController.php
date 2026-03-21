@@ -46,6 +46,7 @@ class ProductController extends Controller
                             'products.type',
                             'products.type_value',
                             'products.category',
+                            'products.product_type',
                             'discounts.name as discount',
                             'brands.name as brand'
                         );
@@ -116,6 +117,7 @@ class ProductController extends Controller
                     'products.short_description',
                     'discounts.name as discount',
                     'brands.name as brand',
+                    'products.product_type',
                     'products.type',
                     'products.type_value',
                 )
@@ -181,6 +183,7 @@ class ProductController extends Controller
                     'products.short_description',
                     'discounts.name as discount',
                     'brands.name as brand',
+                    'products.product_type',
                     'products.type',
                     'products.type_value',
                 )
@@ -263,6 +266,7 @@ class ProductController extends Controller
                 'products.short_description',
                 'discounts.name as discount',
                 'brands.name as brand',
+                'products.product_type',
                 'products.type',
                 'products.type_value',
             )

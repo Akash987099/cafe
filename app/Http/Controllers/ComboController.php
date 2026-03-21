@@ -93,58 +93,53 @@ class ComboController extends Controller
         $request->validate([
             'combo_product_id' => 'required',
             'product_id' => 'required|array',
-            'image' => 'nullable|image'
         ]);
 
         try {
 
             $comboId = $request->combo_product_id;
 
-            $existingItems = Combo::where('combo_product_id', $comboId)->get();
-
-            $existingProductIds = $existingItems->pluck('product_id')->toArray();
-
-            $imagePath = optional($existingItems->first())->image;
-
+            $imagePath = null;
             if ($request->hasFile('image')) {
                 $imageName = time() . '_' . $request->file('image')->getClientOriginalName();
                 $request->file('image')->move(public_path('combo'), $imageName);
                 $imagePath = 'combo/' . $imageName;
             }
 
-            $newProductIds = $request->product_id;
+            $existing = Combo::where('combo_product_id', $comboId)
+                ->pluck('product_id')
+                ->toArray();
 
-            foreach ($newProductIds as $pid) {
+            $new = $request->product_id;
 
-                if (!in_array($pid, $existingProductIds)) {
+            $insertData = [];
 
-                    Combo::create([
+            foreach ($new as $pid) {
+                if (!in_array($pid, $existing)) {
+                    $insertData[] = [
                         'combo_product_id' => $comboId,
-                        'product_id'       => $pid,
-                        'image'            => $imagePath,
-                        'link'             => $request->link,
-                        'description'      => $request->description,
-                        'price'            => $request->price
-                    ]);
+                        'product_id' => $pid,
+                        'image' => $imagePath,
+                        'created_at' => now(),
+                        'updated_at' => now()
+                    ];
                 }
             }
 
-            Combo::where('combo_product_id', $comboId)->update([
-                'image'       => $imagePath,
-                'link'        => $request->link,
-                'description' => $request->description,
-                'price'       => $request->price
-            ]);
+            if (!empty($insertData)) {
+                Combo::insert($insertData);
+            }
 
             Combo::where('combo_product_id', $comboId)
-                ->whereNotIn('product_id', $newProductIds)
+                ->whereNotIn('product_id', $new)
                 ->delete();
 
-            return redirect()->back()->with('success', 'Combo Updated Successfully!');
+            return back()->with('success', 'Updated');
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', $e->getMessage());
+            return back()->with('error', $e->getMessage());
         }
     }
+
     public function deleteItem($id)
     {
         try {
@@ -158,16 +153,9 @@ class ComboController extends Controller
             }
 
             $combo->delete();
-
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Deleted successfully'
-            ]);
+            return back()->with('success', 'Successfully Deleted');
         } catch (\Exception $e) {
-            return response()->json([
-                'status' => 'error',
-                'message' => $e->getMessage()
-            ]);
+            return back()->with('error', $e->getMessage());
         }
     }
 }
