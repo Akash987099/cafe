@@ -42,6 +42,7 @@ Route::get('/all-products', [ProductController::class, 'allProducts']);
 Route::get('/products/{url}', [ProductController::class, 'productsDetails']);
 Route::get('/review/{id}', [ProductController::class, 'productsReview']);
 Route::get('/search', [ProductController::class, 'search']);
+Route::get('product/combo', [ProductController::class, 'comboProducts']);
 
 // Promotional
 Route::get('/promotionals', [PromotionalController::class, 'promotional']);

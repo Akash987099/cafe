@@ -59,4 +59,10 @@ class Product extends Model
     {
         return $this->hasOne(Review::class, 'product_id', 'id');
     }
+
+    public function comboItems()
+{
+    return $this->hasMany(Combo::class, 'combo_product_id');
+}
+
 }

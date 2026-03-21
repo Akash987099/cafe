@@ -19,6 +19,7 @@ use App\Models\Review;
 use Illuminate\Support\Facades\DB;
 use App\Models\Varient;
 use App\Models\VarientValue;
+use App\Models\Combo;
 
 class ProductController extends Controller
 {
@@ -162,6 +163,56 @@ class ProductController extends Controller
                 'data'   => [],
                 'error'  => $e->getMessage()
             ], 500);
+        }
+    }
+
+    public function comboProducts()
+    {
+        try {
+
+            $combos = Combo::with('product')
+                ->select('combo_product_id', 'image', 'price', 'description')
+                ->get();
+
+            $data = [];
+
+            foreach ($combos as $combo) {
+
+                $items = Combo::where('combo_product_id', $combo->combo_product_id)
+                    ->with('product')
+                    ->get();
+
+                $comboName = $items->first()->product->name ?? 'combo';
+
+                $data[] = [
+                    'combo_id'   => $combo->combo_product_id,
+                    'name'       => $comboName,
+                    'url'        => '4' . '-' . Str::slug($comboName) . '-' . $combo->combo_product_id,
+                    'image'      => $combo->image,
+                    'price'      => $combo->price,
+                    'description' => $combo->description,
+
+                    'items' => $items->map(function ($item) {
+                        return [
+                            'id'    => $item->product->id ?? null,
+                            'name'  => $item->product->name ?? '',
+                            'image' => $item->product->image ?? '',
+                            'price' => $item->product->price ?? 0,
+                            'url'   => Str::slug($item->product->name ?? '') . '-' . ($item->product->id ?? 0) // ✅ item url bhi
+                        ];
+                    })
+                ];
+            }
+
+            return response()->json([
+                'status' => true,
+                'data'   => $data
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'error'  => $e->getMessage()
+            ]);
         }
     }
 
