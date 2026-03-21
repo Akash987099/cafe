@@ -25,6 +25,24 @@ class TaxController extends Controller
         return view('tax.add');
     }
 
+    public function export()
+    {
+        $taxes = $this->tax->orderBy('id', 'desc')->get(['name', 'tax_value', 'status']);
+        $fileName = 'taxes_' . now()->format('Y_m_d_H_i_s') . '.csv';
+
+        return response()->streamDownload(function () use ($taxes) {
+            $file = fopen('php://output', 'w');
+            fprintf($file, chr(0xEF) . chr(0xBB) . chr(0xBF));
+            fputcsv($file, ['Sr No.', 'Name', 'Tax Value', 'Status']);
+
+            foreach ($taxes as $index => $tax) {
+                fputcsv($file, [$index + 1, $tax->name, $tax->tax_value, (int) $tax->status === 1 ? 'Active' : 'Inactive']);
+            }
+
+            fclose($file);
+        }, $fileName, ['Content-Type' => 'text/csv; charset=UTF-8']);
+    }
+
     public function save(Request $request)
     {
         // dd($request->all());

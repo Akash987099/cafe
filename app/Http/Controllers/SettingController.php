@@ -25,6 +25,24 @@ class SettingController extends Controller
         return view('setting.add');
     }
 
+    public function export()
+    {
+        $settings = $this->setting->orderBy('id', 'desc')->get(['name', 'slug', 'media_link', 'description']);
+        $fileName = 'settings_' . now()->format('Y_m_d_H_i_s') . '.csv';
+
+        return response()->streamDownload(function () use ($settings) {
+            $file = fopen('php://output', 'w');
+            fprintf($file, chr(0xEF) . chr(0xBB) . chr(0xBF));
+            fputcsv($file, ['Sr No.', 'Name', 'Slug', 'Media Link', 'Description']);
+
+            foreach ($settings as $index => $setting) {
+                fputcsv($file, [$index + 1, $setting->name, $setting->slug, $setting->media_link, $setting->description]);
+            }
+
+            fclose($file);
+        }, $fileName, ['Content-Type' => 'text/csv; charset=UTF-8']);
+    }
+
     public function save(Request $request)
     {
 

@@ -23,6 +23,24 @@ class EmailTemplateController extends Controller
         return view('sms.email.add');
     }
 
+    public function export()
+    {
+        $emails = $this->emailtemplate->orderBy('id', 'desc')->get(['name', 'subject', 'description']);
+        $fileName = 'email_templates_' . now()->format('Y_m_d_H_i_s') . '.csv';
+
+        return response()->streamDownload(function () use ($emails) {
+            $file = fopen('php://output', 'w');
+            fprintf($file, chr(0xEF) . chr(0xBB) . chr(0xBF));
+            fputcsv($file, ['Sr No.', 'Name', 'Subject', 'Description']);
+
+            foreach ($emails as $index => $email) {
+                fputcsv($file, [$index + 1, $email->name, $email->subject, $email->description]);
+            }
+
+            fclose($file);
+        }, $fileName, ['Content-Type' => 'text/csv; charset=UTF-8']);
+    }
+
     public function save(Request $request){
         // dd($request->all());
         $request->validate([

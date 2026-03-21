@@ -10,6 +10,9 @@
                     <h6 class="m-0">Sliders</h6>
 
                     <div class="d-flex gap-2">
+                        <a href="{{ route('slider.export') }}" class="btn btn-success btn-sm">
+                            Export
+                        </a>
                         <a href="{{ route('slider.add') }}" class="btn btn-primary btn-sm">
                             + Add Slider
                         </a>

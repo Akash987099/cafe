@@ -10,6 +10,9 @@
                     <h6 class="m-0">Promotionals</h6>
 
                     <div class="d-flex gap-2">
+                        <a href="{{ route('promotional.export') }}" class="btn btn-success btn-sm">
+                            Export
+                        </a>
                         <a href="{{ route('promotional.add') }}" class="btn btn-primary btn-sm">
                             + Add
                         </a>

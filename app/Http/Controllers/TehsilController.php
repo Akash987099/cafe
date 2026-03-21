@@ -29,6 +29,29 @@ class TehsilController extends Controller
         return view('tehsil.add', compact('district'));
     }
 
+    public function export()
+    {
+        $tehsils = $this->tehsil
+            ->join('districts', 'tehsils.district_id', 'districts.id')
+            ->select('tehsils.name', 'districts.name as district_name')
+            ->orderBy('tehsils.id', 'desc')
+            ->get();
+
+        $fileName = 'tehsils_' . now()->format('Y_m_d_H_i_s') . '.csv';
+
+        return response()->streamDownload(function () use ($tehsils) {
+            $file = fopen('php://output', 'w');
+            fprintf($file, chr(0xEF) . chr(0xBB) . chr(0xBF));
+            fputcsv($file, ['Sr No.', 'District', 'Name']);
+
+            foreach ($tehsils as $index => $tehsil) {
+                fputcsv($file, [$index + 1, $tehsil->district_name, $tehsil->name]);
+            }
+
+            fclose($file);
+        }, $fileName, ['Content-Type' => 'text/csv; charset=UTF-8']);
+    }
+
     public function store(Request $request)
     {
         // dd($request->all());

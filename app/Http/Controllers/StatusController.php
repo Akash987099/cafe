@@ -25,6 +25,24 @@ class StatusController extends Controller
         return view('status.add');
     }
 
+    public function export()
+    {
+        $statuses = $this->status->orderBy('id', 'desc')->get(['name']);
+        $fileName = 'statuses_' . now()->format('Y_m_d_H_i_s') . '.csv';
+
+        return response()->streamDownload(function () use ($statuses) {
+            $file = fopen('php://output', 'w');
+            fprintf($file, chr(0xEF) . chr(0xBB) . chr(0xBF));
+            fputcsv($file, ['Sr No.', 'Name']);
+
+            foreach ($statuses as $index => $status) {
+                fputcsv($file, [$index + 1, $status->name]);
+            }
+
+            fclose($file);
+        }, $fileName, ['Content-Type' => 'text/csv; charset=UTF-8']);
+    }
+
     public function save(Request $request)
     {
         $data = [

@@ -51,6 +51,7 @@ Route::middleware(['auth:admin'])->group(function () {
 
     Route::prefix('users')->controller(UserController::class)->name('users.')->group(function () {
         Route::get('', 'index')->name('index');
+        Route::get('export', 'export')->name('export');
         Route::get('cart/{id}', 'cart')->name('cart');
         Route::get('order/{id}', 'order')->name('order');
         Route::get('order/details/{id}', 'orderDetails')->name('order_details');
@@ -88,6 +89,7 @@ Route::middleware(['auth:admin'])->group(function () {
 
     Route::prefix('discount')->controller(DiscountController::class)->name('discount.')->group(function () {
         Route::get('', 'index')->name('index');
+        Route::get('export', 'export')->name('export');
         Route::get('add', 'add')->name('add');
         Route::post('save', 'save')->name('save');
         Route::get('edit/{id}', 'edit')->name('edit');
@@ -96,6 +98,7 @@ Route::middleware(['auth:admin'])->group(function () {
 
     Route::prefix('products')->controller(ProductController::class)->name('product.')->group(function () {
         Route::get('', 'index')->name('index');
+        Route::get('export', 'export')->name('export');
         Route::get('search', 'search')->name('search');
         Route::get('add', 'add')->name('add');
         Route::post('save', 'save')->name('save');
@@ -118,6 +121,7 @@ Route::middleware(['auth:admin'])->group(function () {
 
     Route::prefix('stores')->controller(StoreController::class)->name('store.')->group(function () {
         Route::get('', 'index')->name('index');
+        Route::get('export', 'export')->name('export');
         Route::get('add', 'add')->name('add');
         Route::post('save', 'save')->name('save');
         Route::get('edit/{id}', 'edit')->name('edit');
@@ -126,6 +130,7 @@ Route::middleware(['auth:admin'])->group(function () {
 
     Route::prefix('country')->controller(CountryController::class)->name('country.')->group(function () {
         Route::get('', 'index')->name('index');
+        Route::get('export', 'export')->name('export');
         Route::get('add', 'add')->name('add');
         Route::post('store', 'store')->name('store');
         Route::get('edit/{id}', 'edit')->name('edit');
@@ -135,6 +140,7 @@ Route::middleware(['auth:admin'])->group(function () {
 
     Route::prefix('state')->controller(StateController::class)->name('state.')->group(function () {
         Route::get('', 'index')->name('index');
+        Route::get('export', 'export')->name('export');
         Route::get('add', 'add')->name('add');
         Route::post('store', 'store')->name('store');
         Route::get('edit/{id}', 'edit')->name('edit');
@@ -144,6 +150,7 @@ Route::middleware(['auth:admin'])->group(function () {
 
     Route::prefix('district')->controller(DistrictController::class)->name('district.')->group(function () {
         Route::get('', 'index')->name('index');
+        Route::get('export', 'export')->name('export');
         Route::get('add', 'add')->name('add');
         Route::post('store', 'store')->name('store');
         Route::get('edit/{id}', 'edit')->name('edit');
@@ -153,6 +160,7 @@ Route::middleware(['auth:admin'])->group(function () {
 
     Route::prefix('tehsil')->controller(TehsilController::class)->name('tehsil.')->group(function () {
         Route::get('', 'index')->name('index');
+        Route::get('export', 'export')->name('export');
         Route::get('add', 'add')->name('add');
         Route::post('store', 'store')->name('store');
         Route::get('edit/{id}', 'edit')->name('edit');
@@ -162,6 +170,7 @@ Route::middleware(['auth:admin'])->group(function () {
 
     Route::prefix('block')->controller(BlockController::class)->name('block.')->group(function () {
         Route::get('', 'index')->name('index');
+        Route::get('export', 'export')->name('export');
         Route::get('add', 'add')->name('add');
         Route::post('save', 'save')->name('save');
         Route::get('edit/{id}', 'edit')->name('edit');
@@ -171,6 +180,7 @@ Route::middleware(['auth:admin'])->group(function () {
 
     Route::prefix('village')->controller(VillageController::class)->name('village.')->group(function () {
         Route::get('', 'index')->name('index');
+        Route::get('export', 'export')->name('export');
         Route::get('add', 'add')->name('add');
         Route::post('save', 'save')->name('save');
         Route::get('edit/{id}', 'edit')->name('edit');
@@ -180,6 +190,7 @@ Route::middleware(['auth:admin'])->group(function () {
 
     Route::prefix('tax')->controller(TaxController::class)->name('tax.')->group(function () {
         Route::get('', 'index')->name('index');
+        Route::get('export', 'export')->name('export');
         Route::get('add', 'add')->name('add');
         Route::post('save', 'save')->name('save');
         Route::get('edit/{id}', 'edit')->name('edit');
@@ -190,6 +201,7 @@ Route::middleware(['auth:admin'])->group(function () {
 
     Route::prefix('settings')->controller(SettingController::class)->name('setting.')->group(function () {
         Route::get('', 'index')->name('index');
+        Route::get('export', 'export')->name('export');
         Route::get('add', 'add')->name('add');
         Route::post('save', 'save')->name('save');
         Route::get('edit/{id}', 'edit')->name('edit');
@@ -199,6 +211,7 @@ Route::middleware(['auth:admin'])->group(function () {
 
     Route::prefix('email/template')->controller(EmailTemplateController::class)->name('email_template.')->group(function () {
         Route::get('', 'index')->name('index');
+        Route::get('export', 'export')->name('export');
         Route::get('add', 'add')->name('add');
         Route::post('save', 'save')->name('save');
         Route::get('edit/{id}', 'edit')->name('edit');
@@ -208,6 +221,7 @@ Route::middleware(['auth:admin'])->group(function () {
 
     Route::prefix('sliders')->controller(SliderController::class)->name('slider.')->group(function () {
         Route::get('', 'index')->name('index');
+        Route::get('export', 'export')->name('export');
         Route::get('add', 'add')->name('add');
         Route::post('save', 'save')->name('save');
         Route::get('edit/{id}', 'edit')->name('edit');
@@ -218,6 +232,7 @@ Route::middleware(['auth:admin'])->group(function () {
 
     Route::prefix('summers')->controller(SummerController::class)->name('summer.')->group(function () {
         Route::get('', 'index')->name('index');
+        Route::get('export', 'export')->name('export');
         Route::get('add', 'add')->name('add');
         Route::post('save', 'save')->name('save');
         Route::get('edit/{id}', 'edit')->name('edit');
@@ -228,6 +243,7 @@ Route::middleware(['auth:admin'])->group(function () {
 
     Route::prefix('promotionals')->controller(PromotionalController::class)->name('promotional.')->group(function () {
         Route::get('', 'index')->name('index');
+        Route::get('export', 'export')->name('export');
         Route::get('add', 'add')->name('add');
         Route::post('save', 'save')->name('save');
         Route::get('edit/{id}', 'edit')->name('edit');
@@ -238,6 +254,7 @@ Route::middleware(['auth:admin'])->group(function () {
 
     Route::prefix('cms')->controller(CMSController::class)->name('cms.')->group(function () {
         Route::get('', 'index')->name('index');
+        Route::get('export', 'export')->name('export');
         Route::get('add', 'add')->name('add');
         Route::post('save', 'save')->name('save');
         Route::get('edit/{id}', 'edit')->name('edit');
@@ -248,6 +265,7 @@ Route::middleware(['auth:admin'])->group(function () {
 
     Route::prefix('recommendeds')->controller(RecommendedController::class)->name('recommended.')->group(function () {
         Route::get('', 'index')->name('index');
+        Route::get('export', 'export')->name('export');
         Route::get('add', 'add')->name('add');
         Route::post('save', 'save')->name('save');
         Route::get('edit/{id}', 'edit')->name('edit');
@@ -267,6 +285,7 @@ Route::middleware(['auth:admin'])->group(function () {
 
     Route::prefix('status')->controller(StatusController::class)->name('status.')->group(function () {
         Route::get('', 'index')->name('index');
+        Route::get('export', 'export')->name('export');
         Route::get('add', 'add')->name('add');
         Route::post('save', 'save')->name('save');
         Route::get('edit/{id}', 'edit')->name('edit');
@@ -280,6 +299,7 @@ Route::middleware(['auth:admin'])->group(function () {
 
     Route::prefix('supplier')->controller(SupplierController::class)->name('supplier.')->group(function () {
         Route::get('', 'index')->name('index');
+        Route::get('export', 'export')->name('export');
         Route::get('add', 'add')->name('add');
         Route::post('save', 'save')->name('save');
         Route::get('edit/{id}', 'edit')->name('edit');
@@ -300,6 +320,7 @@ Route::middleware(['auth:admin'])->group(function () {
 
     Route::prefix('order')->controller(OrderController::class)->name('order.')->group(function () {
         Route::get('', 'index')->name('index');
+        Route::get('export', 'export')->name('export');
         Route::post('status', 'status')->name('status');
         Route::post('delivery_boy', 'deliveryBoy')->name('delivery_boy');
         Route::get('barcodes', 'barcodes')->name('barcodes');
@@ -310,6 +331,7 @@ Route::middleware(['auth:admin'])->group(function () {
 
     Route::prefix('attribute')->controller(AttributeController::class)->name('attribute.')->group(function () {
         Route::get('', 'index')->name('index');
+        Route::get('export', 'export')->name('export');
         Route::get('add', 'add')->name('add');
         Route::post('save', 'save')->name('save');
         Route::get('edit/{id}', 'edit')->name('edit');
@@ -319,6 +341,7 @@ Route::middleware(['auth:admin'])->group(function () {
 
     Route::prefix('attribute/value')->controller(AttributeValueController::class)->name('attribute_value.')->group(function () {
         Route::get('', 'index')->name('index');
+        Route::get('export', 'export')->name('export');
         Route::get('add', 'add')->name('add');
         Route::post('save', 'save')->name('save');
         Route::get('edit/{id}', 'edit')->name('edit');
@@ -337,6 +360,7 @@ Route::middleware(['auth:admin'])->group(function () {
 
     Route::prefix('type')->controller(TypeController::class)->name('type.')->group(function () {
         Route::get('', 'index')->name('index');
+        Route::get('export', 'export')->name('export');
         Route::get('add', 'add')->name('add');
         Route::post('save', 'save')->name('save');
         Route::get('edit/{id}', 'edit')->name('edit');

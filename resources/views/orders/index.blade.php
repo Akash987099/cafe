@@ -6,6 +6,7 @@
             <div class="card mb-4">
                 <div class="card-header pb-0 d-flex justify-content-between align-items-center">
                     <h6 class="m-0">Orders</h6>
+                    <a href="{{ route('order.export') }}" class="btn btn-success btn-sm">Export</a>
                 </div>
 
                 <div class="card-body px-0 pt-0 pb-2">

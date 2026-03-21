@@ -35,6 +35,29 @@ class VillageController extends Controller
         return view('village.add', compact('blocks'));
     }
 
+    public function export()
+    {
+        $villages = $this->village
+            ->join('blocks', 'villages.block_id', '=', 'blocks.id')
+            ->select('villages.name', 'blocks.name as block_name')
+            ->orderBy('villages.id', 'desc')
+            ->get();
+
+        $fileName = 'villages_' . now()->format('Y_m_d_H_i_s') . '.csv';
+
+        return response()->streamDownload(function () use ($villages) {
+            $file = fopen('php://output', 'w');
+            fprintf($file, chr(0xEF) . chr(0xBB) . chr(0xBF));
+            fputcsv($file, ['Sr No.', 'Block', 'Name']);
+
+            foreach ($villages as $index => $village) {
+                fputcsv($file, [$index + 1, $village->block_name, $village->name]);
+            }
+
+            fclose($file);
+        }, $fileName, ['Content-Type' => 'text/csv; charset=UTF-8']);
+    }
+
     public function save(Request $request)
     {
         $request->validate([

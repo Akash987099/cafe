@@ -29,6 +29,33 @@ class RecommendedController extends Controller
         return view('recommended.add', compact('products'));
     }
 
+    public function export()
+    {
+        $recommended = $this->recommended
+            ->join('products as source_products', 'recommended_products.product_id', '=', 'source_products.id')
+            ->leftJoin('products as target_products', 'recommended_products.recommended_product_id', '=', 'target_products.id')
+            ->select(
+                'source_products.name as product_name',
+                'target_products.name as recommended_product_name'
+            )
+            ->orderBy('recommended_products.id', 'desc')
+            ->get();
+
+        $fileName = 'recommended_products_' . now()->format('Y_m_d_H_i_s') . '.csv';
+
+        return response()->streamDownload(function () use ($recommended) {
+            $file = fopen('php://output', 'w');
+            fprintf($file, chr(0xEF) . chr(0xBB) . chr(0xBF));
+            fputcsv($file, ['Sr No.', 'Product Name', 'Recommended Product']);
+
+            foreach ($recommended as $index => $item) {
+                fputcsv($file, [$index + 1, $item->product_name, $item->recommended_product_name]);
+            }
+
+            fclose($file);
+        }, $fileName, ['Content-Type' => 'text/csv; charset=UTF-8']);
+    }
+
     public function save(Request $request)
     {
         $request->validate([

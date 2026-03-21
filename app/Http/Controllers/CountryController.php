@@ -24,6 +24,44 @@ class CountryController extends Controller
         return view('country.add');
     }
 
+    public function export()
+    {
+        $countries = $this->country->orderBy('id', 'desc')->get([
+            'country_name',
+            'country_code',
+            'country_short',
+            'currency_name',
+            'currency_code',
+            'currency_symbol',
+            'currency_rate',
+            'status',
+        ]);
+
+        $fileName = 'countries_' . now()->format('Y_m_d_H_i_s') . '.csv';
+
+        return response()->streamDownload(function () use ($countries) {
+            $file = fopen('php://output', 'w');
+            fprintf($file, chr(0xEF) . chr(0xBB) . chr(0xBF));
+            fputcsv($file, ['Sr No.', 'Name', 'Code', 'Currency SN', 'Currency', 'CCO', 'Symbol', 'Rate', 'Status']);
+
+            foreach ($countries as $index => $country) {
+                fputcsv($file, [
+                    $index + 1,
+                    $country->country_name,
+                    $country->country_code,
+                    $country->country_short,
+                    $country->currency_name,
+                    $country->currency_code,
+                    $country->currency_symbol,
+                    $country->currency_rate,
+                    (int) $country->status === 1 ? 'Active' : 'Inactive',
+                ]);
+            }
+
+            fclose($file);
+        }, $fileName, ['Content-Type' => 'text/csv; charset=UTF-8']);
+    }
+
     public function store(Request $request)
     {
         $request->validate([

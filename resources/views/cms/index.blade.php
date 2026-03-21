@@ -10,6 +10,9 @@
                     <h6 class="m-0">CMS</h6>
 
                     <div class="d-flex gap-2">
+                        <a href="{{ route('cms.export') }}" class="btn btn-success btn-sm">
+                            Export
+                        </a>
                         <a href="{{ route('cms.add') }}" class="btn btn-primary btn-sm">
                             + Add CMS Page
                         </a>

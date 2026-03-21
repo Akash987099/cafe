@@ -25,6 +25,24 @@ class StoreController extends Controller
         return view('store.add');
     }
 
+    public function export()
+    {
+        $stores = $this->store->orderBy('id', 'desc')->get(['name', 'city', 'zipcode', 'address', 'description']);
+        $fileName = 'stores_' . now()->format('Y_m_d_H_i_s') . '.csv';
+
+        return response()->streamDownload(function () use ($stores) {
+            $file = fopen('php://output', 'w');
+            fprintf($file, chr(0xEF) . chr(0xBB) . chr(0xBF));
+            fputcsv($file, ['Sr No.', 'Name', 'City', 'Zipcode', 'Address', 'Description']);
+
+            foreach ($stores as $index => $store) {
+                fputcsv($file, [$index + 1, $store->name, $store->city, $store->zipcode, $store->address, $store->description]);
+            }
+
+            fclose($file);
+        }, $fileName, ['Content-Type' => 'text/csv; charset=UTF-8']);
+    }
+
     public function save(Request $request)
     {
         $request->validate([

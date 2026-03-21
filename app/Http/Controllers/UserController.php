@@ -29,6 +29,24 @@ class UserController extends Controller
         return view('wholesale.index', compact('users'));
     }
 
+    public function export()
+    {
+        $users = $this->user->orderBy('id', 'desc')->get(['name', 'email', 'phone', 'status']);
+        $fileName = 'users_' . now()->format('Y_m_d_H_i_s') . '.csv';
+
+        return response()->streamDownload(function () use ($users) {
+            $file = fopen('php://output', 'w');
+            fprintf($file, chr(0xEF) . chr(0xBB) . chr(0xBF));
+            fputcsv($file, ['Sr No.', 'Name', 'Email', 'Phone', 'Status']);
+
+            foreach ($users as $index => $user) {
+                fputcsv($file, [$index + 1, $user->name, $user->email, $user->phone, $user->status]);
+            }
+
+            fclose($file);
+        }, $fileName, ['Content-Type' => 'text/csv; charset=UTF-8']);
+    }
+
     public function status(Request $request)
     {
         $status = $request->value;

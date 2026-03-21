@@ -25,6 +25,24 @@ class SliderController extends Controller
         return view('slider.add');
     }
 
+    public function export()
+    {
+        $sliders = $this->slider->orderBy('id', 'desc')->get(['name', 'link', 'status']);
+        $fileName = 'sliders_' . now()->format('Y_m_d_H_i_s') . '.csv';
+
+        return response()->streamDownload(function () use ($sliders) {
+            $file = fopen('php://output', 'w');
+            fprintf($file, chr(0xEF) . chr(0xBB) . chr(0xBF));
+            fputcsv($file, ['Sr No.', 'Name', 'Link', 'Status']);
+
+            foreach ($sliders as $index => $slider) {
+                fputcsv($file, [$index + 1, $slider->name, $slider->link, (int) $slider->status === 1 ? 'Active' : 'Inactive']);
+            }
+
+            fclose($file);
+        }, $fileName, ['Content-Type' => 'text/csv; charset=UTF-8']);
+    }
+
     public  function save(Request $request)
     {
         // dd($request->all());

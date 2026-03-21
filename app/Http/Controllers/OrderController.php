@@ -56,6 +56,50 @@ class OrderController extends Controller
         return view('orders.index', compact('orders', 'status', 'supplier'));
     }
 
+    public function export()
+    {
+        $orders = $this->order
+            ->join('users', 'orders.user_id', '=', 'users.id')
+            ->select(
+                'orders.order_no',
+                'users.name as user_name',
+                'orders.total_amount',
+                'orders.total_discount',
+                'orders.final_amount',
+                'orders.status',
+                'orders.payment_status',
+                'orders.payment_method',
+                'orders.created_at'
+            )
+            ->orderBy('orders.id', 'desc')
+            ->get();
+
+        $fileName = 'orders_' . now()->format('Y_m_d_H_i_s') . '.csv';
+
+        return response()->streamDownload(function () use ($orders) {
+            $file = fopen('php://output', 'w');
+            fprintf($file, chr(0xEF) . chr(0xBB) . chr(0xBF));
+            fputcsv($file, ['Sr No.', 'Order Number', 'User', 'Amount', 'Discount', 'Total Amount', 'Status', 'Payment Status', 'Payment Method', 'Date']);
+
+            foreach ($orders as $index => $order) {
+                fputcsv($file, [
+                    $index + 1,
+                    $order->order_no,
+                    $order->user_name,
+                    $order->total_amount,
+                    $order->total_discount,
+                    $order->final_amount,
+                    $order->status,
+                    $order->payment_status,
+                    $order->payment_method,
+                    $order->created_at,
+                ]);
+            }
+
+            fclose($file);
+        }, $fileName, ['Content-Type' => 'text/csv; charset=UTF-8']);
+    }
+
     public function status(Request $request)
     {
         $request->validate([

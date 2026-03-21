@@ -109,6 +109,46 @@ class ProductController extends Controller
         return view('product.add', compact('category', 'sub_category', 'brand', 'discount', 'type'));
     }
 
+    public function export()
+    {
+        $products = $this->product->orderBy('id', 'desc')->get([
+            'sku_product_id',
+            'name',
+            'sku_code',
+            'hsn_code',
+            'status',
+            'in_stock',
+            'stock',
+            'price',
+            'ac_price'
+        ]);
+
+        $fileName = 'products_' . now()->format('Y_m_d_H_i_s') . '.csv';
+
+        return response()->streamDownload(function () use ($products) {
+            $file = fopen('php://output', 'w');
+            fprintf($file, chr(0xEF) . chr(0xBB) . chr(0xBF));
+            fputcsv($file, ['Sr No.', 'Product Id', 'Name', 'SKU', 'HSN', 'Status', 'In Stock', 'Stock', 'Price', 'Actual Price']);
+
+            foreach ($products as $index => $product) {
+                fputcsv($file, [
+                    $index + 1,
+                    $product->sku_product_id,
+                    $product->name,
+                    $product->sku_code,
+                    $product->hsn_code,
+                    $product->status,
+                    (int) $product->in_stock === 1 ? 'Stock' : 'Out of Stock',
+                    $product->stock,
+                    $product->price,
+                    $product->ac_price,
+                ]);
+            }
+
+            fclose($file);
+        }, $fileName, ['Content-Type' => 'text/csv; charset=UTF-8']);
+    }
+
     private function generateUniqueAwb()
     {
         do {

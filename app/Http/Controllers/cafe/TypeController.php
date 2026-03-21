@@ -26,6 +26,24 @@ class TypeController extends Controller
         return view('cafe.type.add');
     }
 
+    public function export()
+    {
+        $types = $this->type->orderBy('id', 'desc')->get(['name']);
+        $fileName = 'types_' . now()->format('Y_m_d_H_i_s') . '.csv';
+
+        return response()->streamDownload(function () use ($types) {
+            $file = fopen('php://output', 'w');
+            fprintf($file, chr(0xEF) . chr(0xBB) . chr(0xBF));
+            fputcsv($file, ['Sr No.', 'Name']);
+
+            foreach ($types as $index => $type) {
+                fputcsv($file, [$index + 1, $type->name]);
+            }
+
+            fclose($file);
+        }, $fileName, ['Content-Type' => 'text/csv; charset=UTF-8']);
+    }
+
     public function save(Request $request)
     {
         $request->validate([

@@ -29,6 +29,25 @@ class SupplierController extends Controller
         return view('supplier.add');
     }
 
+    public function export()
+    {
+        $suppliers = $this->supplier->latest('id')->get(['name', 'phone', 'email', 'address', 'type']);
+        $fileName = 'suppliers_' . now()->format('Y_m_d_H_i_s') . '.csv';
+
+        return response()->streamDownload(function () use ($suppliers) {
+            $file = fopen('php://output', 'w');
+            fprintf($file, chr(0xEF) . chr(0xBB) . chr(0xBF));
+            fputcsv($file, ['Sr No.', 'Role', 'Name', 'Phone', 'Email', 'Address']);
+
+            foreach ($suppliers as $index => $supplier) {
+                $role = (int) $supplier->type === 2 ? 'Delivery Boy' : 'Supplier';
+                fputcsv($file, [$index + 1, $role, $supplier->name, $supplier->phone, $supplier->email, $supplier->address]);
+            }
+
+            fclose($file);
+        }, $fileName, ['Content-Type' => 'text/csv; charset=UTF-8']);
+    }
+
     public function save(Request $request)
     {
         $validated = $request->validate([

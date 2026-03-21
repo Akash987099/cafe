@@ -8,9 +8,12 @@
                     <div class="category-card-header-top">
                         <h6 class="m-0">Supplier</h6>
 
-                        <a href="{{ route('supplier.add') }}" class="btn btn-primary btn-sm category-card-add-btn">
-                            + Add
-                        </a>
+                        <div class="d-flex gap-2 flex-wrap">
+                            <a href="{{ route('supplier.export') }}" class="btn btn-success btn-sm">Export</a>
+                            <a href="{{ route('supplier.add') }}" class="btn btn-primary btn-sm category-card-add-btn">
+                                + Add
+                            </a>
+                        </div>
                     </div>
 
                     <input type="text" id="searchInput" placeholder="Search..."

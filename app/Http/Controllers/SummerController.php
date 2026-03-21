@@ -25,6 +25,24 @@ class SummerController extends Controller
         return view('summer.add');
     }
 
+    public function export()
+    {
+        $summaries = $this->summer->orderBy('position', 'asc')->orderBy('id', 'desc')->get(['name', 'sub_name', 'status']);
+        $fileName = 'summer_' . now()->format('Y_m_d_H_i_s') . '.csv';
+
+        return response()->streamDownload(function () use ($summaries) {
+            $file = fopen('php://output', 'w');
+            fprintf($file, chr(0xEF) . chr(0xBB) . chr(0xBF));
+            fputcsv($file, ['Sr No.', 'Name', 'Title', 'Status']);
+
+            foreach ($summaries as $index => $summer) {
+                fputcsv($file, [$index + 1, $summer->name, $summer->sub_name, (int) $summer->status === 1 ? 'Active' : 'Inactive']);
+            }
+
+            fclose($file);
+        }, $fileName, ['Content-Type' => 'text/csv; charset=UTF-8']);
+    }
+
     public function save(Request $request)
     {
         // dd($request->all());

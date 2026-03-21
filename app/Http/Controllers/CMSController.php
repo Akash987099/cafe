@@ -24,6 +24,24 @@ class CMSController extends Controller
         return view('cms.add');
     }
 
+    public function export()
+    {
+        $pages = $this->cms->orderBy('id', 'desc')->get(['name', 'category', 'url', 'status', 'description']);
+        $fileName = 'cms_' . now()->format('Y_m_d_H_i_s') . '.csv';
+
+        return response()->streamDownload(function () use ($pages) {
+            $file = fopen('php://output', 'w');
+            fprintf($file, chr(0xEF) . chr(0xBB) . chr(0xBF));
+            fputcsv($file, ['Sr No.', 'Name', 'Category', 'Slug', 'Status', 'Description']);
+
+            foreach ($pages as $index => $page) {
+                fputcsv($file, [$index + 1, $page->name, $page->category, $page->url, (int) $page->status === 1 ? 'Active' : 'Inactive', $page->description]);
+            }
+
+            fclose($file);
+        }, $fileName, ['Content-Type' => 'text/csv; charset=UTF-8']);
+    }
+
     public function save(Request $request)
     {
         // dd($request->all());

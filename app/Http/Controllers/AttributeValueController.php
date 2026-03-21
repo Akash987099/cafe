@@ -31,6 +31,29 @@ class AttributeValueController extends Controller
         return view('attribute_value.add', compact('attributes'));
     }
 
+    public function export()
+    {
+        $attributeValues = $this->attribute_value
+            ->join('attributes', 'attribute_values.attribute_id', '=', 'attributes.id')
+            ->select('attributes.name as attribute_name', 'attribute_values.value')
+            ->orderBy('attribute_values.id', 'desc')
+            ->get();
+
+        $fileName = 'attribute_values_' . now()->format('Y_m_d_H_i_s') . '.csv';
+
+        return response()->streamDownload(function () use ($attributeValues) {
+            $file = fopen('php://output', 'w');
+            fprintf($file, chr(0xEF) . chr(0xBB) . chr(0xBF));
+            fputcsv($file, ['Sr No.', 'Attribute', 'Value']);
+
+            foreach ($attributeValues as $index => $attributeValue) {
+                fputcsv($file, [$index + 1, $attributeValue->attribute_name, $attributeValue->value]);
+            }
+
+            fclose($file);
+        }, $fileName, ['Content-Type' => 'text/csv; charset=UTF-8']);
+    }
+
     public function save(Request $request)
     {
         $request->validate([

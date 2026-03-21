@@ -25,6 +25,24 @@ class AttributeController extends Controller
         return view('attribute.add');
     }
 
+    public function export()
+    {
+        $attributes = $this->attribute->orderBy('id', 'desc')->get(['name']);
+        $fileName = 'attributes_' . now()->format('Y_m_d_H_i_s') . '.csv';
+
+        return response()->streamDownload(function () use ($attributes) {
+            $file = fopen('php://output', 'w');
+            fprintf($file, chr(0xEF) . chr(0xBB) . chr(0xBF));
+            fputcsv($file, ['Sr No.', 'Name']);
+
+            foreach ($attributes as $index => $attribute) {
+                fputcsv($file, [$index + 1, $attribute->name]);
+            }
+
+            fclose($file);
+        }, $fileName, ['Content-Type' => 'text/csv; charset=UTF-8']);
+    }
+
     public function save(Request $request)
     {
         $request->validate([

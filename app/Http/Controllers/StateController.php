@@ -27,6 +27,29 @@ class StateController extends Controller
         $country = $this->country->all();
         return view('state.add', compact('country'));
     }
+
+    public function export()
+    {
+        $states = $this->state
+            ->join('countries', 'state.country_id', 'countries.id')
+            ->select('state.name', 'state.short_name', 'countries.country_name')
+            ->orderBy('state.id', 'desc')
+            ->get();
+
+        $fileName = 'states_' . now()->format('Y_m_d_H_i_s') . '.csv';
+
+        return response()->streamDownload(function () use ($states) {
+            $file = fopen('php://output', 'w');
+            fprintf($file, chr(0xEF) . chr(0xBB) . chr(0xBF));
+            fputcsv($file, ['Sr No.', 'Country', 'Name', 'Short Name']);
+
+            foreach ($states as $index => $state) {
+                fputcsv($file, [$index + 1, $state->country_name, $state->name, $state->short_name]);
+            }
+
+            fclose($file);
+        }, $fileName, ['Content-Type' => 'text/csv; charset=UTF-8']);
+    }
     public function store(Request $request)
     {
         $data = [

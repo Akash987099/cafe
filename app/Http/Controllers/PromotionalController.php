@@ -24,6 +24,24 @@ class PromotionalController extends Controller
         return view('promotional.add');
     }
 
+    public function export()
+    {
+        $promotions = $this->promo->orderBy('position', 'asc')->get(['name', 'url_link', 'status']);
+        $fileName = 'promotionals_' . now()->format('Y_m_d_H_i_s') . '.csv';
+
+        return response()->streamDownload(function () use ($promotions) {
+            $file = fopen('php://output', 'w');
+            fprintf($file, chr(0xEF) . chr(0xBB) . chr(0xBF));
+            fputcsv($file, ['Sr No.', 'Name', 'Link', 'Status']);
+
+            foreach ($promotions as $index => $promotion) {
+                fputcsv($file, [$index + 1, $promotion->name, $promotion->url_link, (int) $promotion->status === 1 ? 'Active' : 'Inactive']);
+            }
+
+            fclose($file);
+        }, $fileName, ['Content-Type' => 'text/csv; charset=UTF-8']);
+    }
+
     public function save(Request $request)
     {
         $request->validate([

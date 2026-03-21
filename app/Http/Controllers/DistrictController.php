@@ -31,6 +31,24 @@ class DistrictController extends Controller
         $state = $this->state->where('country_id', '1')->get();
         return view('district.add', compact('country', 'state'));
     }
+
+    public function export()
+    {
+        $districts = $this->disctrict->orderBy('id', 'desc')->get(['name']);
+        $fileName = 'districts_' . now()->format('Y_m_d_H_i_s') . '.csv';
+
+        return response()->streamDownload(function () use ($districts) {
+            $file = fopen('php://output', 'w');
+            fprintf($file, chr(0xEF) . chr(0xBB) . chr(0xBF));
+            fputcsv($file, ['Sr No.', 'Name']);
+
+            foreach ($districts as $index => $district) {
+                fputcsv($file, [$index + 1, $district->name]);
+            }
+
+            fclose($file);
+        }, $fileName, ['Content-Type' => 'text/csv; charset=UTF-8']);
+    }
     public function store(Request $request)
     {
         $data = [

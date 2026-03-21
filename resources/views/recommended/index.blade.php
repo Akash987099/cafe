@@ -10,6 +10,9 @@
                     <h6 class="m-0">Recommended</h6>
 
                     <div class="d-flex gap-2">
+                        <a href="{{ route('recommended.export') }}" class="btn btn-success btn-sm">
+                            Export
+                        </a>
                         <a href="{{ route('recommended.add') }}" class="btn btn-primary btn-sm">
                             + Add
                         </a>

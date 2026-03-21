@@ -25,6 +25,24 @@ class DiscountController extends Controller
         return view('discount.add');
     }
 
+    public function export()
+    {
+        $discounts = $this->discount->orderBy('id', 'desc')->get(['name', 'amount']);
+        $fileName = 'discounts_' . now()->format('Y_m_d_H_i_s') . '.csv';
+
+        return response()->streamDownload(function () use ($discounts) {
+            $file = fopen('php://output', 'w');
+            fprintf($file, chr(0xEF) . chr(0xBB) . chr(0xBF));
+            fputcsv($file, ['Sr No.', 'Name', 'Amount']);
+
+            foreach ($discounts as $index => $discount) {
+                fputcsv($file, [$index + 1, $discount->name, $discount->amount]);
+            }
+
+            fclose($file);
+        }, $fileName, ['Content-Type' => 'text/csv; charset=UTF-8']);
+    }
+
     public function save(Request $request)
     {
         $request->validate([
