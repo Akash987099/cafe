@@ -35,6 +35,7 @@ class Product extends Model
         'short_description',
         'description',
         'similar',
+        'product_type',
         'type',
         'type_value',
     ];

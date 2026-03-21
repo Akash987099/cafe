@@ -40,6 +40,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
         integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js" integrity="sha512-2ImtlRlf2VVmiGZsjm9bEyhjGW4dU7B6TNwh/hx/iSByxNENtj3WVE6o/9Lj4TJeVXPi4bnOIMXFIJJAeufa0A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 </head>
 
 <style>
@@ -1654,6 +1655,8 @@
                                 href="{{ route('discount.index') }}"><i class="fas fa-percent"></i>Discount</a>
                             <a class="nav-link {{ request()->routeIs('product.*') ? 'active' : '' }}"
                                 href="{{ route('product.index') }}"><i class="fas fa-box-open"></i>Product</a>
+                            <a class="nav-link {{ request()->routeIs('combo.*') ? 'active' : '' }}"
+                                href="{{ route('combo.index') }}"><i class="fas fa-box-open"></i>Combo Product</a>
                             <a class="nav-link {{ request()->routeIs('store.*') ? 'active' : '' }}"
                                 href="{{ route('store.index') }}"><i class="fas fa-store"></i>Store</a>
                             <a class="nav-link {{ request()->routeIs('attribute.*') ? 'active' : '' }}"

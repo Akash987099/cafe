@@ -33,6 +33,7 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\AttributeController;
 use App\Http\Controllers\AttributeValueController;
 use App\Http\Controllers\VarientController;
+use App\Http\Controllers\ComboController;
 
 // Cafe
 use App\Http\Controllers\cafe\TypeController;
@@ -117,6 +118,11 @@ Route::middleware(['auth:admin'])->group(function () {
         // Simalar
         Route::get('similar/{id}', 'similar')->name('similar');
         Route::post('similar/save', 'saveSimilar')->name('similar.save');
+        // Product Type
+        Route::post('product/type', 'productType')->name('product_type');
+        // Import Product
+        Route::post('import', 'import')->name('import');
+        Route::get('sample/download', 'sampleDownload')->name('sample.download');
     });
 
     Route::prefix('stores')->controller(StoreController::class)->name('store.')->group(function () {
@@ -365,5 +371,14 @@ Route::middleware(['auth:admin'])->group(function () {
         Route::post('save', 'save')->name('save');
         Route::get('edit/{id}', 'edit')->name('edit');
         Route::post('update', 'update')->name('update');
+    });
+
+    Route::prefix('combos')->controller(ComboController::class)->name('combo.')->group(function () {
+        Route::get('', 'index')->name('index');
+        Route::get('add/{id}', 'add')->name('add');
+        Route::post('save', 'save')->name('save');
+        Route::get('edit/{id}', 'edit')->name('edit');
+        Route::post('update', 'update')->name('update');
+        Route::get('delete-item/{id}', 'deleteItem')->name('deleteItem');
     });
 });

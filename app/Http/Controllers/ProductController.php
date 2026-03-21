@@ -552,4 +552,33 @@ class ProductController extends Controller
         return redirect()->back()
             ->with('success', 'Similar products updated successfully!');
     }
+
+    public function productType(Request $request)
+    {
+        $status = $request->value;
+        $id = $request->id;
+
+        if (empty($id)) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'ID not found'
+            ], 400);
+        }
+
+        $product = $this->product->find($id);
+
+        if (!$product) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Record not found'
+            ], 404);
+        }
+
+        $product->product_type = $status;
+        $product->save();
+
+        return response()->json([
+            'status'    => 'success',
+        ], 200);
+    }
 }

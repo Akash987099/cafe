@@ -9,6 +9,8 @@
                         <h6 class="m-0">Products</h6>
 
                         <div class="d-flex gap-2 flex-wrap">
+                            <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal"
+                                data-bs-target="#importModal">Import</button>
                             <a href="{{ route('product.export') }}" class="btn btn-success btn-sm">Export</a>
                             <a href="{{ route('product.add') }}" class="btn btn-primary btn-sm category-card-add-btn">
                                 + Add
@@ -32,18 +34,27 @@
                                         Product Id</th>
                                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
                                         Name</th>
-                                    
-                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
+
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
                                         Summer</th>
                                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
                                         Status</th>
-                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">In Stock</th>
-                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Stock</th>
-                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Gallery</th>
-                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Similar</th>
-                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">A Plus</th>
-                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Varient</th>
-                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Action</th>
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">In
+                                        Stock</th>
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
+                                        Stock</th>
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Add
+                                        Combo</th>
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
+                                        Gallery</th>
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
+                                        Similar</th>
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">A
+                                        Plus</th>
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
+                                        Varient</th>
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
+                                        Action</th>
                                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">SKU
                                     </th>
                                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">HSN
@@ -52,7 +63,7 @@
                                         Price</th>
                                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
                                         Actual Price</th>
-                                    
+
                                 </tr>
                             </thead>
                             <tbody id="sortable-table">
@@ -72,15 +83,14 @@
                                         </td>
 
                                         <td>
-                                            <select name="status" class="form-control text-xs font-weight-bold select_summer">
+                                            <select name="status"
+                                                class="form-control text-xs font-weight-bold select_summer">
                                                 <option value="">Select</option>
                                                 @foreach ($summer as $key => $val)
-                                                
-                                                <option value="{{$val->id}}" data-id="{{ $item->id }}"
-                                                    {{ $item->summer_id == $val->id ? 'selected' : '' }}>
-                                                    {{$val->name}}
-                                                </option>
-
+                                                    <option value="{{ $val->id }}" data-id="{{ $item->id }}"
+                                                        {{ $item->summer_id == $val->id ? 'selected' : '' }}>
+                                                        {{ $val->name }}
+                                                    </option>
                                                 @endforeach
                                             </select>
                                         </td>
@@ -92,7 +102,7 @@
                                                     {{ $item->status == 'active' ? 'selected' : '' }}>
                                                     Active
                                                 </option>
-                                                 <option value="inactive" data-id="{{ $item->id }}"
+                                                <option value="inactive" data-id="{{ $item->id }}"
                                                     {{ $item->status == 'inactive' ? 'selected' : '' }}>
                                                     InActive
                                                 </option>
@@ -100,24 +110,46 @@
                                         </td>
 
                                         <td>
-                                            <select name="status" class="form-control text-xs font-weight-bold select_stock">
+                                            <select name="status"
+                                                class="form-control text-xs font-weight-bold select_stock">
                                                 <option value="">Select</option>
                                                 <option value="active" data-id="{{ $item->id }}"
                                                     {{ $item->in_stock == '1' ? 'selected' : '' }}>
                                                     Stock
                                                 </option>
-                                                 <option value="inactive" data-id="{{ $item->id }}"
+                                                <option value="inactive" data-id="{{ $item->id }}"
                                                     {{ $item->in_stock == '0' ? 'selected' : '' }}>
                                                     out of stock
                                                 </option>
                                             </select>
                                         </td>
-                                        
+
                                         <td>
                                             <a href="{{ route('product.stock', $item->id) }}"
                                                 class="text-xs font-weight-bold mb-0 text-info">
                                                 Stock
                                             </a>
+                                        </td>
+
+                                        <td>
+                                            @if ($item->product_type === 'single')
+                                                <select name="status"
+                                                    class="form-control text-xs font-weight-bold select_product_type">
+                                                    <option value="single" data-id="{{ $item->id }}"
+                                                        {{ $item->product_type == 'single' ? 'selected' : '' }}>
+                                                        Single
+                                                    </option>
+                                                    <option value="combo" data-id="{{ $item->id }}"
+                                                        {{ $item->product_type == 'combo' ? 'selected' : '' }}>
+                                                        Combo
+                                                    </option>
+                                                </select>
+                                            @else
+                                                <a href="{{ route('combo.add', $item->id) }}"
+                                                    class="text-xs font-weight-bold mb-0 text-info">
+                                                    Combo
+                                                </a>
+                                            @endif
                                         </td>
 
                                         <td>
@@ -168,7 +200,7 @@
                                             <p class="text-xs font-weight-bold mb-0">{{ $item->ac_price }}</p>
                                         </td>
 
-                                        
+
                                     </tr>
                                 @endforeach
                             </tbody>
@@ -181,9 +213,42 @@
             </div>
         </div>
     </div>
+
+    <div class="modal fade" id="importModal" tabindex="-1" aria-labelledby="importModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="importModalLabel">Import Products</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form action="{{ route('product.import') }}" method="POST" enctype="multipart/form-data" id="importForm">
+                    @csrf
+                    <div class="modal-body">
+                        <div class="mb-3 border-bottom pb-3">
+                            <label class="form-label d-block">Download Sample Format</label>
+                            <p class="text-xs text-muted mb-2">Download this sample file to understand the correct data
+                                format for importing.</p>
+                            <a href="{{ route('product.sample.download') }}"
+                                class="btn btn-info btn-sm text-white mb-0">Download Sample File</a>
+                        </div>
+                        <div class="mb-3 pt-2">
+                            <label for="importFile" class="form-label">Upload Data File</label>
+                            <input class="form-control" type="file" id="importFile" name="import_file" required
+                                accept=".csv, .xlsx, .xls">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Submit Upload</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <script>
         $(document).ready(function() {
-            
+
             $('.select_summer').on('change', function() {
 
                 var product_id = $(this).find(':selected').data('id');
@@ -201,10 +266,11 @@
                     },
                     success: function(res) {
                         console.log(res.message);
+                        showNotification('success', res.message || 'Successfully');
                     },
                     error: function(xhr) {
                         console.log(xhr.responseText);
-                        alert('Something went wrong');
+                        showNotification('danger', 'Something went wrong');
                     }
                 });
             });
@@ -226,10 +292,11 @@
                     },
                     success: function(res) {
                         console.log(res.message);
+                        showNotification('success', res.message || 'Successfully');
                     },
                     error: function(xhr) {
                         console.log(xhr.responseText);
-                        alert('Something went wrong');
+                        showNotification('danger', 'Something went wrong');
                     }
                 });
             });
@@ -251,14 +318,41 @@
                     },
                     success: function(res) {
                         console.log(res.message);
+                        showNotification('success', res.message || 'Successfully');
                     },
                     error: function(xhr) {
                         console.log(xhr.responseText);
-                        alert('Something went wrong');
+                        showNotification('danger', 'Something went wrong');
                     }
                 });
             });
+
+            $('.select_product_type').on('change', function() {
+
+                var product_id = $(this).find(':selected').data('id');
+                var value = $(this).val();
+
+                // console.log(product_id, value);
+
+                $.ajax({
+                    url: "{{ route('product.product_type') }}",
+                    type: "POST",
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        id: product_id,
+                        status: value,
+                    },
+                    success: function(res) {
+                        console.log(res.message);
+                        showNotification('success', res.message || 'Successfully');
+                    },
+                    error: function(xhr) {
+                        console.log(xhr.responseText);
+                        showNotification('danger', 'Something went wrong');
+                    }
+                });
+            });
+
         });
     </script>
-    
 @endsection
