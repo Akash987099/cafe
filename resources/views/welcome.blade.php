@@ -2,9 +2,50 @@
 
 @section('content')
 
- <div class="container-fluid py-4">
+<link rel="stylesheet" href="https://unpkg.com/intro.js/minified/introjs.min.css">
+
+<style>
+  /* Custom Theme for Intro.js to ensure it looks good in Dark/Light modes */
+  .introjs-tooltip {
+      background-color: #ffffff !important;
+      color: #344767 !important;
+      border-radius: 12px !important;
+      box-shadow: 0 4px 20px 0px rgba(0, 0, 0, 0.14), 0 7px 10px -5px rgba(0, 0, 0, 0.4) !important;
+  }
+  .introjs-tooltiptext {
+      font-size: 14px !important;
+      font-family: inherit !important;
+      color: #67748e !important;
+  }
+  .introjs-tooltip-title {
+      font-size: 16px !important;
+      font-weight: 700 !important;
+      color: #344767 !important;
+  }
+  .introjs-button {
+      text-shadow: none !important;
+      background-color: #f8f9fa !important;
+      color: #344767 !important;
+      border: 1px solid #dee2e6 !important;
+      border-radius: 6px !important;
+      font-weight: 600 !important;
+  }
+  .introjs-button:hover { background-color: #e9ecef !important; }
+  .introjs-button.introjs-nextbutton {
+      background-color: #17c1e8 !important; /* Soft UI Info color */
+      color: #fff !important;
+      border-color: #17c1e8 !important;
+  }
+  .introjs-button.introjs-nextbutton:hover { background-color: #13a2c2 !important; }
+</style>
+
+ <div class="container-fluid py-4" data-title="Welcome!" data-intro="Welcome to your dashboard. Let's take a quick tour of your new overview widgets.">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+          <h5 class="mb-0">Dashboard Overview</h5>
+          <button class="btn btn-info mb-0 bg-gradient-info" onclick="startTour()"><i class="fas fa-map-signs me-1"></i> Take a Tour</button>
+      </div>
       <div class="row">
-        <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
+        <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4" data-title="Total Users" data-intro="Shows the total number of registered users on your platform.">
           <div class="card">
             <div class="card-body p-3">
               <div class="row">
@@ -27,7 +68,7 @@
             </div>
           </div>
         </div>
-        <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
+        <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4" data-title="Today's Users" data-intro="Shows the number of users registered today.">
           <div class="card">
             <div class="card-body p-3">
               <div class="row">
@@ -50,7 +91,7 @@
             </div>
           </div>
         </div>
-        <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
+        <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4" data-title="Today's Orders" data-intro="Shows the number of orders placed today.">
           <div class="card">
             <div class="card-body p-3">
               <div class="row">
@@ -71,7 +112,7 @@
             </div>
           </div>
         </div>
-        <div class="col-xl-3 col-sm-6">
+        <div class="col-xl-3 col-sm-6" data-title="Total Orders" data-intro="Shows the total number of orders placed overall.">
           <div class="card">
             <div class="card-body p-3">
               <div class="row">
@@ -95,7 +136,94 @@
       </div>
       
       <div class="row mt-4">
-        <div class="col-lg-5 mb-lg-0 mb-4">
+        <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4" data-title="Total Products" data-intro="Shows the total number of products in your catalog.">
+          <div class="card">
+            <div class="card-body p-3">
+              <div class="row">
+                <div class="col-8">
+                  <div class="numbers">
+                    <p class="text-sm mb-0 text-capitalize font-weight-bold">Total Products</p>
+                    <h5 class="font-weight-bolder mb-0">
+                      {{ $totalProducts ?? 0 }}
+                    </h5>
+                  </div>
+                </div>
+                <div class="col-4 text-end">
+                  <div class="icon icon-shape bg-gradient-info shadow text-center border-radius-md">
+                    <i class="ni ni-box-2 text-lg opacity-10" aria-hidden="true"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4" data-title="Total Categories" data-intro="Shows the total main categories available.">
+          <div class="card">
+            <div class="card-body p-3">
+              <div class="row">
+                <div class="col-8">
+                  <div class="numbers">
+                    <p class="text-sm mb-0 text-capitalize font-weight-bold">Categories</p>
+                    <h5 class="font-weight-bolder mb-0">
+                      {{ $totalCategories ?? 0 }}
+                    </h5>
+                  </div>
+                </div>
+                <div class="col-4 text-end">
+                  <div class="icon icon-shape bg-gradient-success shadow text-center border-radius-md">
+                    <i class="ni ni-app text-lg opacity-10" aria-hidden="true"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4" data-title="Total Subcategories" data-intro="Shows the count of all subcategories.">
+          <div class="card">
+            <div class="card-body p-3">
+              <div class="row">
+                <div class="col-8">
+                  <div class="numbers">
+                    <p class="text-sm mb-0 text-capitalize font-weight-bold">Subcategories</p>
+                    <h5 class="font-weight-bolder mb-0">
+                      {{ $totalSubCategories ?? 0 }}
+                    </h5>
+                  </div>
+                </div>
+                <div class="col-4 text-end">
+                  <div class="icon icon-shape bg-gradient-warning shadow text-center border-radius-md">
+                    <i class="ni ni-bullet-list-67 text-lg opacity-10" aria-hidden="true"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-3 col-sm-6" data-title="Total Brands" data-intro="Shows the number of brands registered in the system.">
+          <div class="card">
+            <div class="card-body p-3">
+              <div class="row">
+                <div class="col-8">
+                  <div class="numbers">
+                    <p class="text-sm mb-0 text-capitalize font-weight-bold">Brands</p>
+                    <h5 class="font-weight-bolder mb-0">
+                      {{ $totalBrands ?? 0 }}
+                    </h5>
+                  </div>
+                </div>
+                <div class="col-4 text-end">
+                  <div class="icon icon-shape bg-gradient-danger shadow text-center border-radius-md">
+                    <i class="ni ni-tag text-lg opacity-10" aria-hidden="true"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row mt-4">
+        <div class="col-lg-5 mb-lg-0 mb-4" data-title="Recent Orders Graph" data-intro="A bar chart visualizing your orders over the last 7 days.">
           <div class="card z-index-2">
             <div class="card-body p-3">
               <div class="bg-gradient-dark border-radius-lg py-3 pe-1 mb-3">
@@ -103,8 +231,8 @@
                   <canvas id="chart-bars" class="chart-canvas" height="170"></canvas>
                 </div>
               </div>
-              <h6 class="ms-2 mt-4 mb-0"> Active Users </h6>
-              <p class="text-sm ms-2"> (<span class="font-weight-bolder">+23%</span>) than last week </p>
+              <h6 class="ms-2 mt-4 mb-0"> Recent Orders </h6>
+              <p class="text-sm ms-2"> (<span class="font-weight-bolder">Last 7 days</span>) overview </p>
               <div class="container border-radius-lg">
                 <div class="row">
                   <div class="col-3 py-3 ps-0">
@@ -211,13 +339,12 @@
             </div>
           </div>
         </div>
-        <div class="col-lg-7">
+        <div class="col-lg-7" data-title="Sales Overview" data-intro="A line chart tracking your revenue over the last 7 days.">
           <div class="card z-index-2">
             <div class="card-header pb-0">
               <h6>Sales overview</h6>
               <p class="text-sm">
-                <i class="fa fa-arrow-up text-success"></i>
-                <span class="font-weight-bold">4% more</span> in 2021
+                <span class="font-weight-bold">Last 7 days</span> performance
               </p>
             </div>
             <div class="card-body p-3">
@@ -229,4 +356,136 @@
         </div>
       </div>
 
+      <div class="row mt-4" data-title="Inventory Overview" data-intro="This table gives you a quick snapshot of your product stocks, starting with the items lowest in stock.">
+        <div class="col-12">
+          <div class="card mb-4">
+            <div class="card-header pb-0">
+              <h6>Product Stock Overview (Low Stock)</h6>
+            </div>
+            <div class="card-body px-0 pt-0 pb-2">
+              <div class="table-responsive p-0">
+                <table class="table align-items-center mb-0">
+                  <thead>
+                    <tr>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Product</th>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">SKU</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Price</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Stock</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @forelse($productStocks ?? [] as $product)
+                    <tr>
+                      <td>
+                        <div class="d-flex px-2 py-1">
+                          <div>
+                            <img src="{{ asset($product->image) }}" class="avatar avatar-sm me-3" style="width: 36px; height: 36px; object-fit: cover; border-radius: 8px;" alt="{{ $product->name }}">
+                          </div>
+                          <div class="d-flex flex-column justify-content-center">
+                            <h6 class="mb-0 text-sm">{{ $product->name }}</h6>
+                          </div>
+                        </div>
+                      </td>
+                      <td>
+                        <p class="text-xs font-weight-bold mb-0">{{ $product->sku_code }}</p>
+                      </td>
+                      <td class="align-middle text-center text-sm">
+                        <p class="text-xs font-weight-bold mb-0">${{ $product->price }}</p>
+                      </td>
+                      <td class="align-middle text-center">
+                        <span class="text-secondary text-xs font-weight-bold">{{ $product->stock }}</span>
+                      </td>
+                      <td class="align-middle text-center text-sm">
+                        @if($product->in_stock == 1 && $product->stock > 0)
+                          <span class="badge badge-sm bg-gradient-success">In Stock</span>
+                        @else
+                          <span class="badge badge-sm bg-gradient-danger">Out of Stock</span>
+                        @endif
+                      </td>
+                    </tr>
+                    @empty
+                    <tr>
+                      <td colspan="5" class="text-center py-4 text-sm text-secondary">No products found.</td>
+                    </tr>
+                    @endforelse
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+<script src="https://unpkg.com/intro.js/minified/intro.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  function startTour() {
+      introJs().setOptions({
+          showProgress: true,
+          showBullets: true,
+          exitOnOverlayClick: false,
+          disableInteraction: true
+      }).start();
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+      // Initialize Onboarding if first time
+      if (!localStorage.getItem('dashboard_tour_done')) {
+          startTour();
+          localStorage.setItem('dashboard_tour_done', 'true');
+      }
+
+      // Chart 1: Recent Orders (Bar Chart)
+      var ctxBars = document.getElementById("chart-bars").getContext("2d");
+      new Chart(ctxBars, {
+        type: "bar",
+        data: {
+          labels: {!! json_encode($ordersLabels ?? []) !!},
+          datasets: [{
+            label: "Orders",
+            data: {!! json_encode($ordersValues ?? []) !!},
+            backgroundColor: "#fff",
+            borderRadius: 4,
+            maxBarThickness: 6
+          }]
+        },
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            y: { grid: { display: false }, ticks: { display: false } },
+            x: { grid: { display: false }, ticks: { display: true, color: '#fff' } },
+          }
+        }
+      });
+
+      // Chart 2: Sales Overview (Line Chart)
+      var ctxLine = document.getElementById("chart-line").getContext("2d");
+      var gradientStroke = ctxLine.createLinearGradient(0, 230, 0, 50);
+      gradientStroke.addColorStop(1, 'rgba(94, 114, 228, 0.2)');
+      gradientStroke.addColorStop(0, 'rgba(94, 114, 228, 0)');
+      
+      new Chart(ctxLine, {
+        type: "line",
+        data: {
+          labels: {!! json_encode($salesLabels ?? []) !!},
+          datasets: [{
+            label: "Revenue ($)",
+            data: {!! json_encode($salesValues ?? []) !!},
+            tension: 0.4, borderWidth: 3, borderColor: "#5e72e4",
+            backgroundColor: gradientStroke, fill: true, pointRadius: 2
+          }]
+        },
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            y: { grid: { drawBorder: false, borderDash: [5, 5] }, ticks: { padding: 10, color: '#ccc' } },
+            x: { grid: { display: false }, ticks: { padding: 10, color: '#ccc' } },
+          }
+        }
+      });
+  });
+</script>
 @endsection

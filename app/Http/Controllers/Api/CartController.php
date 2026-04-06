@@ -67,6 +67,8 @@ class CartController extends Controller
             'qty'        => 'required|integer|min:0',
             'price'      => 'nullable|numeric|min:0',
             'type'       => 'required|in:add,remove,custom',
+            'order_type' => 'required|in:token,delivery,takeway',
+            'table_no'   => 'nullable|integer',
         ]);
 
         if ($validator->fails()) {
@@ -75,6 +77,17 @@ class CartController extends Controller
                 'message' => 'Validation error',
                 'errors'  => $validator->errors(),
             ], 422);
+        }
+
+        if($request->order_type == 'token') {
+            if (!$request->table_no) {
+                return response()->json([
+                    'status'  => false,
+                    'message' => 'Table number is required for token order',
+                ], 400);
+            }
+
+            $table_no = $request->table_no;
         }
 
         $user_id = auth()->id();

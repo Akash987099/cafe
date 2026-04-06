@@ -34,6 +34,8 @@ use App\Http\Controllers\AttributeController;
 use App\Http\Controllers\AttributeValueController;
 use App\Http\Controllers\VarientController;
 use App\Http\Controllers\ComboController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\TableController;
 
 // Cafe
 use App\Http\Controllers\cafe\TypeController;
@@ -44,10 +46,14 @@ Route::controller(LoginController::class)->group(function () {
     Route::post('logins', 'logins')->name('logins');
 });
 
+Route::controller(HomeController::class)->group(function () {
+    Route::get('/', 'index')->name('home');
+});
+
 Route::middleware(['auth:admin'])->group(function () {
 
     Route::controller(AdminController::class)->group(function () {
-        Route::get('', 'index')->name('index');
+        Route::get('home', 'index')->name('index');
     });
 
     Route::prefix('users')->controller(UserController::class)->name('users.')->group(function () {
@@ -381,4 +387,14 @@ Route::middleware(['auth:admin'])->group(function () {
         Route::post('update', 'update')->name('update');
         Route::get('delete-item/{id}', 'deleteItem')->name('deleteItem');
     });
+
+    Route::prefix('table')->controller(TableController::class)->name('table.')->group(function () {
+        Route::get('', 'index')->name('index');
+        Route::get('add', 'add')->name('add');
+        Route::post('save', 'save')->name('save');
+        Route::get('edit/{id}', 'edit')->name('edit');
+        Route::post('update', 'update')->name('update');
+        Route::get('delete-item/{id}', 'deleteItem')->name('deleteItem');
+    });
+
 });
