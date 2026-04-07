@@ -15,7 +15,8 @@ use App\Models\Address;
 use App\Models\TruckOrder;
 use App\Models\Review;
 use App\Models\OrderRating;
-
+use App\Models\Table;
+use Illuminate\Support\Facades\Validator;
 
 class OrderController extends Controller
 {
@@ -40,18 +41,56 @@ class OrderController extends Controller
 
     public function placeOrder(Request $request)
     {
+
+        $validator = Validator::make($request->all(), [
+            'order_type' => 'required|in:token,delivery,takeway',
+            'table_no'   => 'nullable|integer',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status'  => false,
+                'message' => 'Validation error',
+                'errors'  => $validator->errors(),
+            ], 422);
+        }
+
+        if ($request->order_type == 'token') {
+            if (!$request->table_no) {
+                return response()->json([
+                    'status'  => false,
+                    'message' => 'Table number is required for token order',
+                ], 400);
+            }
+
+            $table_no = $request->table_no;
+            $table = Table::where('table_no', $table_no)->first();
+            // dd($table);
+
+            if (!$table) {
+                return response()->json([
+                    'status'  => false,
+                    'message' => 'Table no not found',
+                ], 404);
+            }
+        }
+
         $user_id = auth()->id();
 
-        $address = $this->address
+        if ($request->order_type == 'delivery') {
+            $address = $this->address
             ->where('user_id', $user_id)
             ->where('is_default', 1)
             ->first();
 
-        if (!$address) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Default address not found'
-            ], 400);
+            if (!$address) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Default address not found'
+                ], 400);
+            }
+        }else{
+            $address = 0;
         }
 
         $carts = $this->carts
@@ -94,11 +133,13 @@ class OrderController extends Controller
 
                 $order = $this->order->create([
                     'user_id' => $user_id,
-                    'address_id' => $address->id,
+                    'address_id' => $address->id ?? 0,
                     'order_no' => $orderNo,
                     'total_amount' => $totalAmount,
                     'total_discount' => $totalDiscount,
                     'final_amount' => $finalAmount,
+                    'order_type' => $request->order_type,
+                    'table_no' => $request->table_no ?? null,
                     'payment_method' => $request->payment_method ?? 'cod',
                     'status' => 'Confirm Order'
                 ]);
@@ -133,6 +174,8 @@ class OrderController extends Controller
                     'message' => 'Order placed successfully',
                     'order_id' => $order->id,
                     'order_no' => $orderNo,
+                    'order_type' => $order->order_type,
+                    'table_no' => $order->table_no,
                     'final_amount' => $finalAmount,
                     'total_items' => $carts->count()
                 ]);

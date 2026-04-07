@@ -71,6 +71,10 @@ Route::controller(OrderController::class)->group(function () {
 Route::middleware('auth:api')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
 
+    Route::get('/wallet', [UserController::class, 'walletPoints']);
+    Route::get('/notifications', [UserController::class, 'notifications']);
+    Route::get('/notification/{id}', [UserController::class, 'notificationDetails']);
+
     // address
     Route::post('/add-new-address', [AddressController::class, 'addAddress']);
     Route::post('/update-address', [AddressController::class, 'updateAddress']);
@@ -82,6 +86,7 @@ Route::middleware('auth:api')->group(function () {
         Route::get('/', 'index');
         Route::post('/add', 'add');
         Route::delete('/remove', 'remove');
+        Route::delete('/clear', 'clear');
     });
 
     Route::prefix('wishlist')->controller(WishlistController::class)->group(function () {

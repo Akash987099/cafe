@@ -10,18 +10,24 @@ use App\Models\User;
 use App\Models\ResetPassword;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\OtpMail;
-use Carbon\Carbon;
+use App\Models\Wallet;
+use App\Models\Notification;
+use Carbon\Carbon;  
 use Illuminate\Support\Str;
 
 class AuthController extends Controller
 {
     protected $user;
     protected $reset;
+    protected $wallet;
+    protected $notification;
 
     public function __construct()
     {
         $this->user = new User();
         $this->reset = new ResetPassword();
+        $this->wallet = new Wallet();
+        $this->notification = new Notification();
     }
 
     public function register(Request $request)
@@ -59,7 +65,24 @@ class AuthController extends Controller
             'email'        => $request->email,
             'phone'        => $request->phone,
             'email_verify' => 1,
+            'wallet_points' => 50,
             'password'     => Hash::make($request->password),
+        ]);
+
+        $this->wallet->create([
+            'user_id' => $user->id,
+            'type' => 'credit',
+            'points' => 50,
+            'description' => 'Welcome bonus for new registration',
+            'expiry_date' => Carbon::now()->addDays(28),
+        ]);
+
+        $this->notification->create([
+            'user_id' => $user->id,
+            'title' => 'Welcome to Cafe Loyalty Program',
+            'link' => null,
+            'description' => 'You have received 50 welcome points. Start earning more rewards with us!',
+            'is_read' => 0,
         ]);
 
         return response()->json([

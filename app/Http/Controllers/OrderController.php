@@ -116,6 +116,36 @@ class OrderController extends Controller
                 'status' => $request->status
             ]);
 
+            if ($request->status == 'completed') {
+
+                $alreadyGiven = DB::table('points_transactions')
+                    ->where('order_id', $order->id)
+                    ->where('type', 'credit')
+                    ->exists();
+
+                if (!$alreadyGiven) {
+
+                    $user = User::find($order->user_id);
+
+                    $rewardPercent = 5;
+
+                    $points = ($order->final_amount * $rewardPercent) / 100;
+
+                    DB::table('points_transactions')->insert([
+                        'user_id'     => $user->id,
+                        'order_id'    => $order->id,
+                        'type'        => 'credit',
+                        'points'      => $points,
+                        'description' => 'Points earned from Order #' . $order->order_no,
+                        'created_at'  => now(),
+                        'updated_at'  => now(),
+                    ]);
+
+                    $user->wallet_points += $points;
+                    $user->save();
+                }
+            }
+
             $lastStatus = TruckOrder::where('order_id', $request->id)
                 ->latest()
                 ->first();
