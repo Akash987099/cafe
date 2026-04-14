@@ -53,6 +53,7 @@ class OrderController extends Controller
         $orders = $this->order->join('users', 'orders.user_id', 'users.id')->orderBy('id', 'desc')
             ->select('orders.*', 'users.name as user_name')
             ->paginate(config('constants.pagination_limit'));
+            // dd($orders);
         return view('orders.index', compact('orders', 'status', 'supplier'));
     }
 

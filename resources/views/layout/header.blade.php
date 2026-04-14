@@ -1651,6 +1651,12 @@
                                 href="{{ route('brand.index') }}"><i class="fas fa-tags"></i>Brands</a>
                             <a class="nav-link {{ request()->routeIs('table.*') ? 'active' : '' }}"
                                 href="{{ route('table.index') }}"><i class="fas fa-list"></i>Tables</a>
+                            <a class="nav-link {{ request()->routeIs('points.*') ? 'active' : '' }}"
+                                href="{{ route('points.index') }}"><i class="fas fa-list"></i>Points</a>
+                            <a class="nav-link {{ request()->routeIs('payment_method.*') ? 'active' : '' }}"
+                                href="{{ route('payment_method.index') }}"><i class="fas fa-credit-card"></i>Payment Method</a>
+                            <a class="nav-link {{ request()->routeIs('card_type.*') ? 'active' : '' }}"
+                                href="{{ route('card_type.index') }}"><i class="fas fa-credit-card"></i>Card Type</a>
                             <a class="nav-link {{ request()->routeIs('type.*') ? 'active' : '' }}"
                                 href="{{ route('type.index') }}"><i class="fas fa-tags"></i>Type</a>
                             <a class="nav-link {{ request()->routeIs('discount.*') ? 'active' : '' }}"
@@ -1665,6 +1671,8 @@
                                 href="{{ route('attribute.index') }}"><i class="fas fa-store"></i>Attribute</a>
                             <a class="nav-link {{ request()->routeIs('attribute_value.*') ? 'active' : '' }}"
                                 href="{{ route('attribute_value.index') }}"><i class="fas fa-store"></i>Attribute Value</a>
+                            <a class="nav-link {{ request()->routeIs('offer.*') ? 'active' : '' }}"
+                                href="{{ route('offer.index') }}"><i class="fas fa-tags"></i>Offer</a>
                         </div>
                     </div>
                 </li>
@@ -1697,6 +1705,28 @@
                                 href="{{ route('block.index') }}"><i class="fas fa-vector-square"></i>Block</a>
                             <a class="nav-link {{ request()->routeIs('village.*') ? 'active' : '' }}"
                                 href="{{ route('village.index') }}"><i class="fas fa-house"></i>Village</a>
+                        </div>
+                    </div>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('leads.*') || request()->routeIs('leads.*') ? '' : 'collapsed' }}"
+                        data-bs-toggle="collapse" href="#sidebarLeads" role="button"
+                        aria-expanded="{{ request()->routeIs('leads.*') || request()->routeIs('leads.*') ? 'true' : 'false' }}"
+                        aria-controls="sidebarLeads">
+                        <div
+                            class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
+                            <i class="fas fa-sitemap text-dark"></i>
+                        </div>
+                        <span class="nav-link-text ms-1">Leads</span>
+                    </a>
+                    <div class="collapse {{ request()->routeIs('leads.*') || request()->routeIs('leads.*') ? 'show' : '' }}"
+                        id="sidebarLeads">
+                        <div class="side-submenu">
+                            <a class="nav-link {{ request()->routeIs('leads.*') ? 'active' : '' }}"
+                                href="{{ route('leads.index') }}"><i class="fas fa-user-friends"></i>Leads</a>
+                            <a class="nav-link {{ request()->routeIs('cards.*') ? 'active' : '' }}"
+                                href="{{ route('cards.index') }}"><i class="fas fa-user-friends"></i>Cards</a>
                         </div>
                     </div>
                 </li>

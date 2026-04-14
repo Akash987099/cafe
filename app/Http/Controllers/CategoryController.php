@@ -88,7 +88,6 @@ class CategoryController extends Controller
 
     public function edit($id)
     {
-        // dd($id);
         if (!$id) {
             return redirect()->back()->with('error', 'id not found!');
         }

@@ -11,6 +11,7 @@ use App\Models\Brand;
 use App\Models\Product;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Artisan;
 
 class AdminController extends Controller
 {
@@ -42,9 +43,9 @@ class AdminController extends Controller
             ->get();
 
         $salesData = $this->order->select(
-                DB::raw('DATE(created_at) as date'),
-                DB::raw('SUM(final_amount) as total')
-            )
+            DB::raw('DATE(created_at) as date'),
+            DB::raw('SUM(final_amount) as total')
+        )
             ->where('created_at', '>=', now()->subDays(6))
             ->groupBy('date')
             ->orderBy('date', 'ASC')
@@ -52,15 +53,15 @@ class AdminController extends Controller
 
         $salesLabels = [];
         $salesValues = [];
-        foreach($salesData as $data) {
+        foreach ($salesData as $data) {
             $salesLabels[] = Carbon::parse($data->date)->format('M d');
             $salesValues[] = $data->total ?? 0;
         }
 
         $ordersData = $this->order->select(
-                DB::raw('DATE(created_at) as date'),
-                DB::raw('COUNT(*) as count')
-            )
+            DB::raw('DATE(created_at) as date'),
+            DB::raw('COUNT(*) as count')
+        )
             ->where('created_at', '>=', now()->subDays(6))
             ->groupBy('date')
             ->orderBy('date', 'ASC')
@@ -68,10 +69,12 @@ class AdminController extends Controller
 
         $ordersLabels = [];
         $ordersValues = [];
-        foreach($ordersData as $data) {
+        foreach ($ordersData as $data) {
             $ordersLabels[] = Carbon::parse($data->date)->format('M d');
             $ordersValues[] = $data->count ?? 0;
         }
+
+        $wallets = \App\Models\Wallet::latest()->take(20)->get();
 
         return view('welcome', compact(
             'todayUsers',
@@ -86,7 +89,15 @@ class AdminController extends Controller
             'salesLabels',
             'salesValues',
             'ordersLabels',
-            'ordersValues'
-            ));
+            'ordersValues',
+            'wallets'
+        ));
+    }
+
+    public function runCron()
+    {
+        Artisan::call('wallet:process-points');
+
+        return redirect()->back()->with('success', 'Cron executed successfully');
     }
 }

@@ -36,6 +36,12 @@ use App\Http\Controllers\VarientController;
 use App\Http\Controllers\ComboController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\TableController;
+use App\Http\Controllers\PointController;
+use App\Http\Controllers\PaymentMethodController;
+use App\Http\Controllers\CardTypeController;
+use App\Http\Controllers\LeadController;
+use App\Http\Controllers\CardController;
+use App\Http\Controllers\OfferController;
 
 // Cafe
 use App\Http\Controllers\cafe\TypeController;
@@ -54,6 +60,7 @@ Route::middleware(['auth:admin'])->group(function () {
 
     Route::controller(AdminController::class)->group(function () {
         Route::get('home', 'index')->name('index');
+        Route::get('run-wallet-cron', 'runCron')->name('run.cron');
     });
 
     Route::prefix('users')->controller(UserController::class)->name('users.')->group(function () {
@@ -395,6 +402,56 @@ Route::middleware(['auth:admin'])->group(function () {
         Route::get('edit/{id}', 'edit')->name('edit');
         Route::post('update', 'update')->name('update');
         Route::get('delete-item/{id}', 'deleteItem')->name('deleteItem');
+    });
+
+    Route::prefix('points')->controller(PointController::class)->name('points.')->group(function () {
+        Route::get('', 'index')->name('index');
+        Route::get('add', 'add')->name('add');
+        Route::post('save', 'save')->name('save');
+        Route::get('edit/{id}', 'edit')->name('edit');
+        Route::post('update', 'update')->name('update');
+        Route::get('delete/{id}', 'delete')->name('delete');
+    });
+
+    Route::prefix('payment-methods')->controller(PaymentMethodController::class)->name('payment_method.')->group(function () {
+        Route::get('', 'index')->name('index');
+        Route::get('add', 'add')->name('add');
+        Route::post('save', 'save')->name('save');
+        Route::get('edit/{id}', 'edit')->name('edit');
+        Route::post('update', 'update')->name('update');
+        Route::post('status', 'updateStatus')->name('status');
+        Route::get('delete/{id}', 'delete')->name('delete');
+    });
+
+    Route::prefix('card-types')->controller(CardTypeController::class)->name('card_type.')->group(function () {
+        Route::get('', 'index')->name('index');
+        Route::get('add', 'add')->name('add');
+        Route::post('save', 'save')->name('save');
+        Route::get('edit/{id}', 'edit')->name('edit');
+        Route::post('update', 'update')->name('update');
+        Route::post('status', 'updateStatus')->name('status');
+        Route::get('delete/{id}', 'delete')->name('delete');
+    });
+
+    Route::prefix('leads')->controller(LeadController::class)->name('leads.')->group(function () {
+        Route::get('', 'index')->name('index');
+        Route::get('view/{id}', 'view')->name('view');
+        Route::post('status/{id}', 'updateStatus')->name('status');
+    });
+
+    Route::prefix('cards')->controller(CardController::class)->name('cards.')->group(function () {
+        Route::get('', 'index')->name('index');
+        Route::post('status', 'updateStatus')->name('status');
+    });
+
+    Route::prefix('offers')->controller(OfferController::class)->name('offer.')->group(function () {
+        Route::get('', 'index')->name('index');
+        Route::get('add', 'add')->name('add');
+        Route::post('save', 'save')->name('save');
+        Route::get('edit/{id}', 'edit')->name('edit');
+        Route::post('update', 'update')->name('update');
+        Route::post('status', 'updateStatus')->name('status');
+        Route::get('delete/{id}', 'delete')->name('delete');
     });
 
 });

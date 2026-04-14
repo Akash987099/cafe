@@ -4,6 +4,7 @@ use App\Models\EmailTemplate;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\OtpMail;
 use App\Models\Setting;
+use App\Models\Points;
 use Illuminate\Support\Facades\Http;
 
 use Carbon\Carbon;
@@ -93,5 +94,39 @@ if (!function_exists('generateBreadcrumb')) {
         }
 
         return $breadcrumb;
+    }
+}
+
+if (!function_exists('add_reward_points')) {
+
+    function add_reward_points($user_id, $order_id, $order_amount)
+    {
+        $setting = \App\Models\Points::latest()->first();
+
+        if (!$setting) {
+            return false;
+        }
+
+        if ($order_amount < $setting->min_order_amount) {
+            return false;
+        }
+
+        $earnedAmount = ($order_amount * $setting->reward_percent) / 100;
+
+        $points = $earnedAmount / $setting->point_value;
+        $finalPoints = floor($points); 
+
+        $expiryDate = \Carbon\Carbon::now()->addDays($setting->expiry_days);
+
+        \App\Models\Wallet::create([
+            'user_id' => $user_id,
+            'order_id' => $order_id,
+            'type' => 'credit',
+            'points' => $finalPoints,
+            'description' => 'Points earned on order',
+            'expiry_date' => $expiryDate,
+        ]);
+
+        return true;
     }
 }

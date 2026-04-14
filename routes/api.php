@@ -16,6 +16,9 @@ use App\Http\Controllers\Api\CartController;
 use App\Http\Controllers\Api\WishlistController;
 use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\ReviewController;
+use App\Http\Controllers\Api\PaymentMethodController;
+use App\Http\Controllers\Api\LeadController;
+use App\Http\Controllers\Api\OfferController;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/verify-otp', [AuthController::class, 'verifyOtp']);
@@ -70,10 +73,14 @@ Route::controller(OrderController::class)->group(function () {
 // Authenticate Page
 Route::middleware('auth:api')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
+    
+    Route::get('/payment-methods', [PaymentMethodController::class, 'index']);
 
     Route::get('/wallet', [UserController::class, 'walletPoints']);
     Route::get('/notifications', [UserController::class, 'notifications']);
     Route::get('/notification/{id}', [UserController::class, 'notificationDetails']);
+    Route::get('/loyalty/points', [UserController::class, 'loyaltyPoints']);
+    Route::get('/user-profile', [UserController::class, 'profile']);
 
     // address
     Route::post('/add-new-address', [AddressController::class, 'addAddress']);
@@ -106,6 +113,23 @@ Route::middleware('auth:api')->group(function () {
     Route::prefix('rating')->controller(ReviewController::class)->group(function () {
         Route::post('/order-rating', 'orderRating');
         Route::post('/product-rating', 'productRating');
+    });
+
+    Route::prefix('card')->controller(LeadController::class)->group(function () {
+        Route::get('/', 'myCards');
+        Route::get('transaction-history', 'transactionHistory');
+        Route::post('/set-primary/{id}', 'setPrimaryCard');
+        Route::post('/apply', 'apply');
+    });
+
+    Route::prefix('leads')->controller(LeadController::class)->group(function () {
+        Route::get('/', 'index');
+        Route::get('/{id}', 'show');
+    });
+
+    Route::prefix('offers')->controller(OfferController::class)->group(function () {
+        Route::get('/', 'index');
+        Route::get('/{id}', 'show');
     });
 
 });

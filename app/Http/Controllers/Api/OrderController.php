@@ -16,7 +16,12 @@ use App\Models\TruckOrder;
 use App\Models\Review;
 use App\Models\OrderRating;
 use App\Models\Table;
+use App\Models\Wallet;
 use Illuminate\Support\Facades\Validator;
+use App\Models\CardTransaction;
+use App\Models\UserCard;
+use App\Models\CardType;
+use App\Models\Notification;
 
 class OrderController extends Controller
 {
@@ -27,6 +32,11 @@ class OrderController extends Controller
     protected $transcation;
     protected $address;
     protected $track;
+    protected $wallet;
+    protected $card;
+    protected $cardtype;
+    protected $cardtransaction;
+    protected $notification;
 
     public function __construct()
     {
@@ -37,6 +47,11 @@ class OrderController extends Controller
         $this->transcation = new Transcation();
         $this->address = new Address();
         $this->track = new TruckOrder();
+        $this->wallet = new Wallet();
+        $this->card = new UserCard();
+        $this->cardtype = new CardType();
+        $this->cardtransaction = new CardTransaction();
+        $this->notification = new Notification();
     }
 
     public function placeOrder(Request $request)
@@ -45,6 +60,7 @@ class OrderController extends Controller
         $validator = Validator::make($request->all(), [
             'order_type' => 'required|in:token,delivery,takeway',
             'table_no'   => 'nullable|integer',
+            'payment_method'   => 'required|in:cod,online,wallet,card',
         ]);
 
         if ($validator->fails()) {
@@ -76,6 +92,8 @@ class OrderController extends Controller
         }
 
         $user_id = auth()->id();
+
+        // dd(auth()->user());
 
         if ($request->order_type == 'delivery') {
             $address = $this->address
@@ -129,6 +147,69 @@ class OrderController extends Controller
 
                 $finalAmount = $totalAmount - $totalDiscount;
 
+                if($request->payment_method == 'wallet'){
+                    $wallet_points = auth()->user()->wallet_points;
+
+                    if($wallet_points < $finalAmount){
+                        return response()->json([
+                            'status' => false,
+                            'message' => 'Insufficient wallet points'
+                        ], 400);
+                    }
+
+                    $user = auth()->user();
+                    $user->wallet_points = $wallet_points - $finalAmount;
+                    $user->save();
+
+                    $payment_status = 'paid';
+                }
+
+                if($request->payment_method == 'card'){
+                    if (!$request->card_number) {
+                        return response()->json([
+                            'status'  => false,
+                            'message' => 'Card number is required for card payment',
+                        ], 400);
+                    }
+                    $card = $this->card->where('user_id', $user_id)
+                        ->where('card_number', $request->card_number)
+                        ->first();
+                    if (!$card) {
+                        return response()->json([
+                            'status'  => false,
+                            'message' => 'Card not found',
+                        ], 404);
+                    }
+
+                    if($card->status != 1){
+                        return response()->json([
+                            'status'  => false,
+                            'message' => 'Card is not active',
+                        ], 400);
+                    }
+
+                    if (\Carbon\Carbon::parse($card->expiry_date)->isPast()) {
+                        return response()->json([
+                            'status'  => false,
+                            'message' => 'Card is expired',
+                        ], 400);
+                    }
+
+                    if($card->balance < $finalAmount){
+                        return response()->json([
+                            'status'  => false,
+                            'message' => 'Insufficient card balance',
+                        ], 400);
+                    }
+
+                    $cardtype = $this->cardtype->find($card->card_type_id);
+                    $discountPercent = $cardtype->discount_percent ?? 0;
+
+                    $discountAmount = ($finalAmount * $discountPercent) / 100;
+                    $card->balance = $card->balance - $finalAmount;
+                    $card->save();
+                }
+
                 $orderNo = $this->generateOrderNo();
 
                 $order = $this->order->create([
@@ -141,8 +222,35 @@ class OrderController extends Controller
                     'order_type' => $request->order_type,
                     'table_no' => $request->table_no ?? null,
                     'payment_method' => $request->payment_method ?? 'cod',
-                    'status' => 'Confirm Order'
+                    'status' => 'Confirm Order',
+                    'description' => $request->description ?? null,
+                    'payment_status' => $request->payment_method == 'wallet' ? 'paid' : 'pending',
                 ]);
+
+                if($request->payment_method == 'card') {
+                    $this->cardtransaction->create([
+                        'card_id' => $card->id,
+                        'user_id' => $user_id,
+                        'order_id' => $orderNo,
+                        'amount' => $finalAmount,
+                        'type' => 'debit',
+                        'description' => "Payment for order, Card No: **** **** **** " . substr($card->card_number, -4),
+                    ]);
+
+                    $this->notification->create([
+                        'user_id' => $user_id,
+                        'title' => 'Card Payment Successful',
+                        'description' => "Your card ending with " . substr($card->card_number, -4) . " has been charged ₹{$finalAmount} for order {$orderNo}."
+                    ]);
+
+                    $this->wallet->create([
+                        'user_id' => $user_id,
+                        'order_id' => $order->id,
+                        'type' => 'credit',
+                        'points' => $discountAmount,
+                        'description' => "Wallet points credited for card payment, Order No: {$orderNo}",
+                    ]);
+                }
 
                 foreach ($carts as $cart) {
 
@@ -163,10 +271,25 @@ class OrderController extends Controller
                 }
 
                 $this->transcation->create([
+                    'user_id' => $user_id,
                     'order_id' => $order->id,
                     'payment_id' => null,
                     'amount' => $finalAmount,
-                    'status' => 'Confirm Order'
+                    'currency' => 'INR',
+                    'payment_method' => $request->payment_method,
+                    'transaction_type' => 'debit',
+                    'gateway' => $request->payment_method == 'online' ? 'razorpay' : null,
+                    'status' => 'success',
+                    'payment_status' => 'paid',
+                    'paid_at' => now()
+                ]);
+
+                add_reward_points($user_id, $order->id, $finalAmount);
+
+                $this->notification->create([
+                    'user_id' => $user_id,
+                    'title' => 'Order Placed Successfully',
+                    'description' => "Your order {$orderNo} has been placed successfully. Total amount: ₹{$finalAmount}."
                 ]);
 
                 return response()->json([
@@ -179,6 +302,7 @@ class OrderController extends Controller
                     'final_amount' => $finalAmount,
                     'total_items' => $carts->count()
                 ]);
+
             });
         } catch (\Throwable $e) {
             report($e);

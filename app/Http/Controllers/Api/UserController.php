@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Notification;
+use App\Models\Wallet;
 use App\Models\Address;
 
 class UserController extends Controller
@@ -76,6 +77,66 @@ class UserController extends Controller
         return response()->json([
             'status' => true,
             'notification' => $notification,
+        ], 200);
+    }
+
+    public function loyaltyPoints()
+    {
+        $user = auth()->user();
+
+        if (!$user) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Unauthorized user',
+            ], 401);
+        }
+
+        $walletPoints = Wallet::where('user_id', $user->id)
+            // ->where('is_processed', 1)
+            ->with(['order:id,order_no'])
+            ->select('id', 'order_id', 'points', 'type', 'description', 'is_processed', 'expiry_date', 'created_at')
+            ->get();
+
+        $availablePoints = 0;
+
+        foreach ($walletPoints as $point) {
+
+            // if (!empty($point->expiry_date) && \Carbon\Carbon::parse($point->expiry_date)->isPast()) {
+            //     continue;
+            // }
+
+            if ($point->type == 'credit') {
+                $availablePoints += $point->points;
+            } 
+            // elseif ($point->type == 'debit') {
+            //     $availablePoints -= $point->points;
+            // }
+
+            $point->order_no = $point->order->order_no ?? null;
+            unset($point->order);
+        }
+
+        return response()->json([
+            'status' => true,
+            'available_points' => $availablePoints,
+            'points' => $walletPoints,
+        ], 200);
+    }
+
+    public function profile()
+    {
+        $user = auth()->user();
+
+        if (!$user) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Unauthorized user',
+            ], 401);
+        }
+
+        return response()->json([
+            'status' => true,
+            'user' => $user,
         ], 200);
     }
 }
