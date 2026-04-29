@@ -57,10 +57,14 @@ class OrderController extends Controller
     public function placeOrder(Request $request)
     {
 
+        $delhivery_charge = 0;
+        $distance = 0;
+        $time = 0;
+
         $validator = Validator::make($request->all(), [
             'order_type' => 'required|in:token,delivery,takeway',
             'table_no'   => 'nullable|integer',
-            'payment_method'   => 'required|in:cod,online,wallet,card',
+            'payment_method'   => 'required|in:cod,online,wallet,card,Razorpay',
         ]);
 
         if ($validator->fails()) {
@@ -107,6 +111,18 @@ class OrderController extends Controller
                     'message' => 'Default address not found'
                 ], 400);
             }
+
+            if ($request->delhivery_charge) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Delhivery charge cannot be applied for delivery order',
+                ], 400);
+            }
+            
+            $delhivery_charge = number_format($address ? ($address->distance * 5) : 0, 2);
+            $time = $address ? $address->time : 0;
+            $distance = $address ? $address->distance : 0;
+
         }else{
             $address = 0;
         }
@@ -125,7 +141,7 @@ class OrderController extends Controller
         }
 
         try {
-            return DB::transaction(function () use ($carts, $user_id, $request, $address) {
+            return DB::transaction(function () use ($carts, $user_id, $request, $address, $delhivery_charge) {
 
                 $totalAmount = 0;
                 $totalDiscount = 0;
@@ -145,7 +161,7 @@ class OrderController extends Controller
                     $totalDiscount += $cart->discount;
                 }
 
-                $finalAmount = $totalAmount - $totalDiscount;
+                $finalAmount = $totalAmount - $totalDiscount + ($request->order_type == 'delivery' ? $delhivery_charge : 0);
 
                 if($request->payment_method == 'wallet'){
                     $wallet_points = auth()->user()->wallet_points;
@@ -218,13 +234,14 @@ class OrderController extends Controller
                     'order_no' => $orderNo,
                     'total_amount' => $totalAmount,
                     'total_discount' => $totalDiscount,
+                    'delhivery_charge' => $delhivery_charge,
                     'final_amount' => $finalAmount,
                     'order_type' => $request->order_type,
                     'table_no' => $request->table_no ?? null,
                     'payment_method' => $request->payment_method ?? 'cod',
                     'status' => 'Confirm Order',
                     'description' => $request->description ?? null,
-                    'payment_status' => $request->payment_method == 'wallet' ? 'paid' : 'pending',
+                    'payment_status' => $request->payment_method == 'cod' ? 'pending' : 'paid',
                 ]);
 
                 if($request->payment_method == 'card') {
@@ -273,12 +290,12 @@ class OrderController extends Controller
                 $this->transcation->create([
                     'user_id' => $user_id,
                     'order_id' => $order->id,
-                    'payment_id' => null,
+                    'payment_id' => $request->payment_id ?? null,
                     'amount' => $finalAmount,
                     'currency' => 'INR',
                     'payment_method' => $request->payment_method,
                     'transaction_type' => 'debit',
-                    'gateway' => $request->payment_method == 'online' ? 'razorpay' : null,
+                    'gateway' => $request->payment_method == 'Razorpay' ? 'Razorpay' : ($request->payment_method == 'wallet' ? 'Wallet' : ($request->payment_method == 'card' ? 'Card' : 'COD')),
                     'status' => 'success',
                     'payment_status' => 'paid',
                     'paid_at' => now()

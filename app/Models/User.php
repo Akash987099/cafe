@@ -21,7 +21,10 @@ class User extends Authenticatable implements JWTSubject
         'status',
         'email_verify',
         'wallet_points',
-        'otp_expires_at'
+        'otp_expires_at',
+        'credit_limit',
+        'used_limit',
+        'is_credit_enabled'
     ];
 
     protected $hidden = [

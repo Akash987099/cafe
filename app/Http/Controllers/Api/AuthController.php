@@ -12,8 +12,10 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\OtpMail;
 use App\Models\Wallet;
 use App\Models\Notification;
+use App\Models\Address;
 use Carbon\Carbon;  
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Cache;
 
 class AuthController extends Controller
 {
@@ -21,6 +23,7 @@ class AuthController extends Controller
     protected $reset;
     protected $wallet;
     protected $notification;
+    protected $address;
 
     public function __construct()
     {
@@ -28,6 +31,7 @@ class AuthController extends Controller
         $this->reset = new ResetPassword();
         $this->wallet = new Wallet();
         $this->notification = new Notification();
+        $this->address = new Address();
     }
 
     public function register(Request $request)
@@ -297,9 +301,29 @@ class AuthController extends Controller
             ], 401);
         }
 
+        $registryKey = 'online-users-registry';
+        $registry = collect(Cache::get($registryKey, []))
+            ->push($user->id)
+            ->unique()
+            ->values()
+            ->all();
+
+        Cache::put('online-user-' . $user->id, [
+            'id' => $user->id,
+            'name' => $user->name,
+            'email' => $user->email,
+            'phone' => $user->phone,
+            'last_seen_at' => now()->toDateTimeString(),
+            'last_seen_unix' => now()->timestamp,
+        ], now()->addMinutes(10));
+        Cache::forever($registryKey, $registry);
+
+        $is_address = $this->address->where('user_id', $user->id)->exists();
+
         return response()->json([
             'status' => true,
             'token' => $token,
+            'is_address'  => $is_address ? true : false,
             'data'  => $user,
         ], 200);
     }
@@ -400,6 +424,12 @@ class AuthController extends Controller
 
     public function logout()
     {
+        $user = auth('api')->user();
+
+        if ($user) {
+            Cache::forget('online-user-' . $user->id);
+        }
+
         auth()->logout();
 
         return response()->json([

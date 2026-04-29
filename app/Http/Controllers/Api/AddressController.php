@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Address;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 class AddressController extends Controller
@@ -19,19 +20,29 @@ class AddressController extends Controller
     public function addAddress(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            // 'user_id'     => 'required|integer|exists:users,id',
-            'country'     => 'required|string',
-            'state'       => 'required|string',
-            'district'    => 'required|string',
-            'tehsil'      => 'required|string',
-            'block'       => 'required|string',
-            'village'     => 'required|string',
-            'address'     => 'required|string',
-            'person'      => 'required|string',
-            'landmark'      => 'required|string',
-            'contact'     => 'required|digits_between:10,12',
-            'is_default'  => 'required|boolean',
+            'country'      => 'nullable|string',
+            'state'        => 'nullable|string',
+            'district'     => 'nullable|string',
+            'tehsil'       => 'nullable|string',
+            'block'        => 'nullable|string',
+            'village'      => 'nullable|string',
+            'address'      => 'required|string',
+
+            // FIXED
+            'person'       => 'required|string',
+
+            'landmark'     => 'nullable|string',
+            'contact'      => 'nullable|digits_between:10,12',
+            'is_default'   => 'required|boolean',
+
+            // FIXED lowercase
+            'address_type' => 'required|in:Home,Work,Other',
+
+            // FIXED numeric
+            'lat'          => 'nullable|numeric',
+            'lng'          => 'nullable|numeric',
         ]);
+
 
         if ($validator->fails()) {
             return response()->json([
@@ -42,10 +53,22 @@ class AddressController extends Controller
         }
 
         $user_id = auth()->id();
+        // dd($user_id); 
 
         if ($request->is_default == 1) {
             Address::where('user_id', $user_id)
                 ->update(['is_default' => 0]);
+        }
+
+        $distance = 0;
+        $time = '0 min';
+
+        if ($request->lat && $request->lng) {
+
+            $result = $this->getDistanceTime($request->lat, $request->lng);
+
+            $distance = $result['distance'];
+            $time = $result['time'];
         }
 
         $address = Address::create([
@@ -61,6 +84,12 @@ class AddressController extends Controller
             'contact'    => $request->contact,
             'landmark'    => $request->landmark,
             'is_default' => $request->is_default,
+            'distance'   => $distance,
+            'time'       => $time,
+            'lat'        => $request->lat,
+            'lng'        => $request->lng,
+            'address_type' => $request->address_type,
+            'street'      => $request->street,
         ]);
 
         return response()->json([
@@ -70,6 +99,48 @@ class AddressController extends Controller
         ], 200);
     }
 
+    public function getDistanceTime($userLat, $userLng)
+    {
+        $store = DB::table('store')->first();
+
+        if (!$store) {
+            return [
+                'distance' => 0,
+                'time' => '0 min'
+            ];
+        }
+
+        $earthRadius = 6371;
+
+        $latFrom = deg2rad($userLat);
+        $lonFrom = deg2rad($userLng);
+
+        $latTo = deg2rad($store->latitude);
+        $lonTo = deg2rad($store->longitude);
+
+        $latDelta = $latTo - $latFrom;
+        $lonDelta = $lonTo - $lonFrom;
+
+        $angle = 2 * asin(
+            sqrt(
+                pow(sin($latDelta / 2), 2) +
+                cos($latFrom) * cos($latTo) *
+                pow(sin($lonDelta / 2), 2)
+            )
+        );
+
+        $distance = $earthRadius * $angle;
+        $distance = round($distance, 2);
+
+        // Avg speed 30 KM/H
+        $minutes = round(($distance / 30) * 60);
+
+        return [
+            'distance' => $distance,
+            'time' => $minutes . ' min'
+        ];
+    }
+
     public function updateAddress(Request $request)
     {
         $id = $request->id;
@@ -77,16 +148,16 @@ class AddressController extends Controller
         $validator = Validator::make($request->all(), [
             'id'          => 'required|integer',
             // 'user_id'     => 'required|integer',
-            'country'     => 'required|string',
-            'state'       => 'required|string',
-            'district'    => 'required|string',
-            'tehsil'      => 'required|string',
-            'block'       => 'required|string',
-            'village'     => 'required|string',
+            'country'     => 'nullable|string',
+            'state'       => 'nullable|string',
+            'district'    => 'nullable|string',
+            'tehsil'      => 'nullable|string',
+            'block'       => 'nullable|string',
+            'village'     => 'nullable|string',
             'address'     => 'required|string',
-            'person'      => 'required|string',
-            'landmark'      => 'required|string',
-            'contact'     => 'required|digits_between:10,12',
+            'person'      => 'nullable|string',
+            'landmark'      => 'nullable|string',
+            'contact'     => 'nullable|digits_between:10,12',
             'is_default'  => 'required|boolean',
         ]);
 
@@ -117,6 +188,17 @@ class AddressController extends Controller
                 ->update(['is_default' => 0]);
         }
 
+        $distance = 0;
+        $time = '0 min';
+
+        if ($request->lat && $request->lng) {
+
+            $result = $this->getDistanceTime($request->lat, $request->lng);
+
+            $distance = $result['distance'];
+            $time = $result['time'];
+        }
+
         $address->update([
             'country'    => $request->country,
             'state'      => $request->state,
@@ -129,6 +211,12 @@ class AddressController extends Controller
             'contact'    => $request->contact,
             'landmark'    => $request->landmark,
             'is_default' => $request->is_default,
+            'distance'   => $distance,
+            'time'       => $time,
+            'lat'        => $request->lat,
+            'lng'        => $request->lng,
+            'street'     => $request->street,
+            'address_type' => $request->address_type,
         ]);
 
         return response()->json([

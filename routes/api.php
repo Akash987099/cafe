@@ -19,6 +19,7 @@ use App\Http\Controllers\Api\ReviewController;
 use App\Http\Controllers\Api\PaymentMethodController;
 use App\Http\Controllers\Api\LeadController;
 use App\Http\Controllers\Api\OfferController;
+use App\Http\Controllers\Api\PaylaterController;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/verify-otp', [AuthController::class, 'verifyOtp']);
@@ -71,7 +72,7 @@ Route::controller(OrderController::class)->group(function () {
 });
 
 // Authenticate Page
-Route::middleware('auth:api')->group(function () {
+Route::middleware(['auth:api', \App\Http\Middleware\TrackApiUserActivity::class])->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     
     Route::get('/payment-methods', [PaymentMethodController::class, 'index']);
@@ -130,6 +131,12 @@ Route::middleware('auth:api')->group(function () {
     Route::prefix('offers')->controller(OfferController::class)->group(function () {
         Route::get('/', 'index');
         Route::get('/{id}', 'show');
+    });
+
+    Route::prefix('paylater')->controller(PaylaterController::class)->group(function () {
+        Route::get('/', 'index');
+        Route::post('/apply', 'apply');
+        Route::get('/status', 'status');
     });
 
 });

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Cart;
 use App\Models\Product;
+use App\Models\Address;
 use App\Models\Discount;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
@@ -13,15 +14,19 @@ use Illuminate\Support\Str;
 class CartController extends Controller
 {
     protected $cart;
+    protected $address;
 
     public function __construct()
     {
         $this->cart = new Cart();
+        $this->address = new Address();
     }
 
     public function index(Request $request)
     {
         $user_id = auth()->id();
+
+        $address = $this->address->where('user_id', $user_id)->where('is_default', 1)->first();
 
         $carts = $this->cart
             ->join('products', 'carts.product_id', 'products.id')
@@ -55,6 +60,9 @@ class CartController extends Controller
             'message' => 'Success!',
             'total_qty' => $total,
             'totalPrice' => $price,
+            'distance' => $address ? $address->distance : 0,
+            'time' => $address ? $address->time : 0,
+            'delhivery_charge' => number_format($address ? ($address->distance * 5) : 0, 2),
             'discount' => $discount,
             'data' => $carts
         ]);

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>API Explorer | Postman-Style API Dashboard</title>
+  <title>API Explorer | API & Delivery Dashboard</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
@@ -61,7 +61,8 @@
             <i class="fas fa-bolt text-indigo-500"></i> 
             API Workspace
           </h1>
-         </div>
+          <p class="mt-2 text-sm text-slate-500">api.php aur delivery.php ke endpoints yahin explore aur test kar sakte hain.</p>
+        </div>
         <div class="flex gap-2">
           <div class="relative">
             <i class="fas fa-key absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
@@ -93,7 +94,7 @@
               <th scope="col" class="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">API Name</th>
               <th scope="col" class="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Method</th>
               <th scope="col" class="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Endpoint URL</th>
-              <th scope="col" class="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Status / Auth</th>
+              <th scope="col" class="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Group / Auth</th>
               <th scope="col" class="px-6 py-4 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider w-10">
                 <i class="fas fa-chevron-down text-slate-400"></i>
               </th>
@@ -108,7 +109,7 @@
 
     <!-- Info note -->
     <div class="mt-6 text-center text-sm text-slate-400 flex justify-center gap-4">
-      <span><i class="fas fa-mouse-pointer text-indigo-400"></i> Click any row → detailed view with URL, headers, body & sample response</span>
+      <span><i class="fas fa-mouse-pointer text-indigo-400"></i> Click any row for endpoint details, headers, request body aur live response</span>
     </div>
   </div>
 
@@ -200,7 +201,11 @@
                 <input type="text" id="endpoint-${api.id}" value="${fullUrl}" class="text-sm bg-slate-50 px-3 py-1.5 rounded-lg font-mono text-slate-800 border border-slate-300 flex-1 focus:ring-2 focus:ring-indigo-200 outline-none transition" title="You can edit {id} or parameters here before hitting Send">
               </div>
               <div class="text-sm text-slate-600"><span class="font-semibold">Description:</span> ${api.description}</div>
-              <div class="flex gap-4 text-xs"><span class="font-semibold">Auth:</span> <code class="bg-slate-100 px-2 py-0.5 rounded">${api.auth}</code> <span class="text-emerald-600 ml-2"><i class="fas fa-circle text-[8px]"></i> ${api.status}</span></div>
+              <div class="flex flex-wrap gap-4 text-xs">
+                <span><span class="font-semibold">Group:</span> <code class="bg-slate-100 px-2 py-0.5 rounded">${api.group ?? 'api.php'}</code></span>
+                <span><span class="font-semibold">Auth:</span> <code class="bg-slate-100 px-2 py-0.5 rounded">${api.auth}</code></span>
+                <span class="text-emerald-600"><i class="fas fa-circle text-[8px]"></i> ${api.status}</span>
+              </div>
             </div>
           </div>
 
@@ -274,7 +279,7 @@
             <td class="px-6 py-4 whitespace-nowrap">
               <div class="flex items-center gap-2">
                 <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-                <span class="text-sm text-slate-600">${api.auth.substring(0, 12)}${api.auth.length > 12 ? '…' : ''}</span>
+                <span class="text-sm text-slate-600">${api.group ?? 'api.php'}</span>
               </div>
             </td>
             <td class="px-6 py-4 text-right">

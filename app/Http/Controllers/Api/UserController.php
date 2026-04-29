@@ -39,7 +39,7 @@ class UserController extends Controller
     {
         $user = auth()->user();
 
-        $notification = Notification::where('user_id', $user->id)->select('id', 'title', 'description')->get();
+        $notification = Notification::where('user_id', $user->id)->select('id', 'title', 'description')->orderBy('id', 'desc')->get();
 
         return response()->json([
             'status' => true,
@@ -61,6 +61,7 @@ class UserController extends Controller
         $notification = Notification::where('user_id', $user->id)
             ->where('id', $id)
             ->select('id', 'title', 'description', 'is_read')
+            ->orderBy('id', 'desc')
             ->first();
 
         if (!$notification) {
@@ -95,6 +96,7 @@ class UserController extends Controller
             // ->where('is_processed', 1)
             ->with(['order:id,order_no'])
             ->select('id', 'order_id', 'points', 'type', 'description', 'is_processed', 'expiry_date', 'created_at')
+            ->orderBy('id', 'desc')
             ->get();
 
         $availablePoints = 0;

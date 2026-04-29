@@ -60,6 +60,8 @@ Route::middleware(['auth:admin'])->group(function () {
 
     Route::controller(AdminController::class)->group(function () {
         Route::get('home', 'index')->name('index');
+        Route::get('wallets', 'wallets')->name('wallets');
+        Route::get('stocks', 'stocks')->name('stocks');
         Route::get('run-wallet-cron', 'runCron')->name('run.cron');
     });
 

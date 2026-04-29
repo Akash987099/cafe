@@ -39,6 +39,10 @@
                                         Payment Status</th>
                                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
                                         payment method</th>
+
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
+                                        Payment Id</th>
+
                                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
                                         Date</th>
                                 </tr>
@@ -123,6 +127,10 @@
 
                                         <td>
                                             <p class="text-xs font-weight-bold mb-0">{{ $item->payment_method }}</p>
+                                        </td>
+
+                                        <td>
+                                            <p class="text-xs font-weight-bold mb-0">{{ $item->payment_id }}</p>
                                         </td>
 
                                         <td>

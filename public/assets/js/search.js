@@ -2,6 +2,10 @@ document.addEventListener("DOMContentLoaded", function () {
     const tableWrappers = document.querySelectorAll(".table-responsive");
 
     tableWrappers.forEach(function (wrapper, index) {
+        if (wrapper.dataset.disableTableSearch === "true") {
+            return;
+        }
+
         const table = wrapper.querySelector("table");
         const tbody = table ? table.querySelector("tbody") : null;
 

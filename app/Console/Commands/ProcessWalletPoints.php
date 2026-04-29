@@ -44,6 +44,8 @@ class ProcessWalletPoints extends Command
                 $item->type = 'debit';
                 $item->description = 'Processed & added to wallet';
                 $item->save();
+
+                \Log::info('Processed wallet ID: ' . $item->id);
             }
         }
 

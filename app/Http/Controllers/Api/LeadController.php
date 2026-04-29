@@ -167,8 +167,9 @@ class LeadController extends Controller
             ->where('user_id', $userId)
             ->update(['is_primary' => 0]);
 
-        $card->is_primary = 1;
-        $card->save();
+        $this->userCard
+            ->where('id', $id)
+            ->update(['is_primary' => 1]);
 
         return response()->json([
             'success' => true,
