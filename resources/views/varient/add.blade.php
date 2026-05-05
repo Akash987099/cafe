@@ -72,4 +72,77 @@
     </div>
 </div>
 
+<div class="row">
+    <div class="col-12">
+        <div class="card mb-4">
+            <div class="card-header pb-0">
+                <h6>Existing Variants</h6>
+            </div>
+
+            <div class="card-body px-0 pt-3 pb-2">
+                <div class="table-responsive p-0">
+                    <table class="table align-items-center mb-0">
+                        <thead>
+                            <tr>
+                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">#</th>
+                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">SKU</th>
+                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Price</th>
+                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Stock</th>
+                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Attributes</th>
+                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Image</th>
+                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse($varient as $key => $item)
+                                <tr>
+                                    <td class="align-middle text-sm ps-3">
+                                        {{ $varient->firstItem() + $key }}
+                                    </td>
+                                    <td class="align-middle text-sm">
+                                        {{ $item->sku ?: '-' }}
+                                    </td>
+                                    <td class="align-middle text-sm">
+                                        {{ $item->price }}
+                                    </td>
+                                    <td class="align-middle text-sm">
+                                        {{ $item->stock }}
+                                    </td>
+                                    <td class="align-middle text-sm" style="white-space: normal;">
+                                        {{ $item->attribute_summary ?: '-' }}
+                                    </td>
+                                    <td class="align-middle text-sm">
+                                        @if(!empty($item->image))
+                                            <img src="{{ asset('variant/' . $item->image) }}" alt="Variant Image" style="width: 50px; height: 50px; object-fit: cover; border-radius: 6px;">
+                                        @else
+                                            -
+                                        @endif
+                                    </td>
+                                    <td class="align-middle text-center">
+                                        <form action="{{ route('varient.delete', $item->id) }}" method="POST" onsubmit="return confirm('Delete this variant?');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-sm btn-danger mb-0">Delete</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="7" class="text-center text-sm py-4">No variants found for this product.</td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+
+                @if($varient->hasPages())
+                    <div class="px-3 pt-3">
+                        {{ $varient->links('shared.pagination') }}
+                    </div>
+                @endif
+            </div>
+        </div>
+    </div>
+</div>
+
 @endsection

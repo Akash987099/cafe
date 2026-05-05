@@ -77,6 +77,7 @@ class SubCategoryController extends Controller
 
         $subcategory = $this->subcategory;
         $subcategory->name = $request->name;
+        $subcategory->description = $request->description;
         $subcategory->category_id = $request->category;
         $subcategory->image = 'subcategory/' . $imageName;
         $save = $subcategory->save();
@@ -120,6 +121,7 @@ class SubCategoryController extends Controller
         }
 
         $subcategory->name = $request->name;
+        $subcategory->description = $request->description;
         $subcategory->category_id = $request->category;
 
         if ($request->hasFile('image')) {

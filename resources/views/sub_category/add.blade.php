@@ -39,6 +39,14 @@
                                     <input type="file" class="form-control" id="image" name="image" placeholder="Enter vehicle number" required>
                                 </div>
                             </div>
+
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="vehicle_name" class="form-label">Description</label>
+                                    <textarea class="form-control" id="description" name="description" placeholder="Enter Description" required></textarea>
+                                </div>
+                            </div>
+
                         </div>
 
                         <div class="mt-4">

@@ -9,6 +9,8 @@
                         <h6 class="m-0">Products</h6>
 
                         <div class="d-flex gap-2 flex-wrap">
+                            <button type="button" class="btn btn-info btn-sm text-white" data-bs-toggle="modal"
+                                data-bs-target="#apiImportModal">Get Products By API</button>
                             <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal"
                                 data-bs-target="#importModal">Import</button>
                             <a href="{{ route('product.export') }}" class="btn btn-success btn-sm">Export</a>
@@ -240,6 +242,38 @@
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                         <button type="submit" class="btn btn-primary">Submit Upload</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="apiImportModal" tabindex="-1" aria-labelledby="apiImportModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="apiImportModalLabel">Get Products By API</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form action="{{ route('product.import_api_products') }}" method="POST">
+                    @csrf
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="client_id" class="form-label">Select Client</label>
+                            <select name="client_id" id="client_id" class="form-control" required>
+                                <option value="">Select Client</option>
+                                @foreach ($clients as $client)
+                                    <option value="{{ $client->id }}">{{ $client->name }}{{ $client->company_name ? ' - ' . $client->company_name : '' }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <p class="text-xs text-muted mb-0">
+                            Selected client ke saath remote DDesire API products current products table me sync ho jayenge.
+                        </p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Fetch & Save</button>
                     </div>
                 </form>
             </div>

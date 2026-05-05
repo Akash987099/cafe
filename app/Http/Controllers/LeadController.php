@@ -69,6 +69,9 @@ class LeadController extends Controller
 
             $this->userCard->create([
                 'user_id' => $lead->user_id,
+                'name' => $lead->name,
+                'mobile' => $lead->phone,
+                'email' => $lead->email,
                 'card_type_id' => $lead->card_type_id,
                 'card_number' => $cardNumber,
                 'card_name' => $lead->cardType->name ?? 'Unknown',

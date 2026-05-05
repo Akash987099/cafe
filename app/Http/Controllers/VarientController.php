@@ -36,6 +36,20 @@ class VarientController extends Controller
         $varient = $this->varient->where('product_id', $id)
             ->orderBy('id', 'desc')
             ->paginate(config('constants.pagination_limit'));
+        $varient->getCollection()->transform(function ($variant) {
+            $variant->attribute_summary = $this->varient_value
+                ->leftJoin('attributes', 'attributes.id', '=', 'product_variant_values.attribute_id')
+                ->leftJoin('attribute_values', 'attribute_values.id', '=', 'product_variant_values.attribute_value_id')
+                ->where('product_variant_values.variant_id', $variant->id)
+                ->select('attributes.name as attribute_name', 'attribute_values.value as attribute_value')
+                ->get()
+                ->map(function ($item) {
+                    return trim(($item->attribute_name ?? 'Attribute') . ': ' . ($item->attribute_value ?? '-'));
+                })
+                ->implode(', ');
+
+            return $variant;
+        });
         $attribute = $this->attribute->orderBy('id', 'desc')->get();
         $attribute_value = $this->attribute_value->orderBy('id', 'desc')->get();
         $product = $this->product->find($id);
@@ -84,5 +98,33 @@ class VarientController extends Controller
         });
 
         return redirect()->back()->with('success', 'Variant Added Successfully');
+    }
+
+    public function delete($id)
+    {
+        if (empty($id)) {
+            return redirect()->back()->with('error', 'Variant ID not found!');
+        }
+
+        $variant = $this->varient->find($id);
+
+        if (!$variant) {
+            return redirect()->back()->with('error', 'Variant record not found!');
+        }
+
+        DB::transaction(function () use ($variant) {
+            if (!empty($variant->image)) {
+                $imagePath = public_path('variant/' . $variant->image);
+
+                if (file_exists($imagePath)) {
+                    unlink($imagePath);
+                }
+            }
+
+            $this->varient_value->where('variant_id', $variant->id)->delete();
+            $variant->delete();
+        });
+
+        return redirect()->back()->with('success', 'Variant deleted successfully');
     }
 }

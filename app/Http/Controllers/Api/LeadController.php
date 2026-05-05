@@ -125,11 +125,11 @@ class LeadController extends Controller
         $takenCardTypeIds = $userCards->pluck('card_type_id')->toArray();
 
         $leads = $this->lead
-            ->with('cardType')
-            ->where('user_id', $userId)
-            ->where('status', 'pending')
-            ->whereNotIn('card_type_id', $takenCardTypeIds)
-            ->get();
+                ->with('cardType')
+                ->where('user_id', $userId)
+                ->where('status', '!=', 'completed')
+                ->whereNotIn('card_type_id', $takenCardTypeIds)
+                ->get();
 
         $leadCardTypeIds = $leads->pluck('card_type_id')->toArray();
 

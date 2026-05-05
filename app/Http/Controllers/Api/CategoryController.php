@@ -48,7 +48,7 @@ class CategoryController extends Controller
     {
         $categories = Category::whereHas('subCategories')
             ->with(['subCategories' => function ($query) {
-                $query->select('id', 'category_id', 'name', 'image')
+                $query->select('id', 'category_id', 'name', 'image', 'description')
                     ->withCount(['products' => function ($q) {
                         $q->where('status', 'active');
                     }]);
@@ -71,6 +71,7 @@ class CategoryController extends Controller
                         'url'   => '3' . '-' . Str::slug($sub->name) . '-' . $sub->id,
                         'name'  => $sub->name,
                         'image' => $sub->image,
+                        'description' => $sub->description,
                         'products' => $sub->products_count
                     ];
                 })->values()

@@ -19,19 +19,9 @@ class WishlistController extends Controller
 
     public function index(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'user_id'    => 'required|integer|exists:users,id',
-        ]);
+        $user_id = auth()->id();
 
-        if ($validator->fails()) {
-            return response()->json([
-                'status'  => false,
-                'message' => 'Validation error',
-                'errors'  => $validator->errors(),
-            ], 422);
-        }
-
-        $wishlist = $this->wishlist->join('products', 'wishlists.product_id', 'products.id')->where('wishlists.user_id', $request->user_id)->select('wishlists.id as wishlist_id', 'wishlists.product_id', 'products.name', 'products.image')->get();
+        $wishlist = $this->wishlist->join('products', 'wishlists.product_id', 'products.id')->where('wishlists.user_id', $user_id)->select('wishlists.id as wishlist_id', 'wishlists.product_id', 'products.name', 'products.image')->get();
 
         if (!$wishlist) {
             return response()->json([
@@ -54,7 +44,6 @@ class WishlistController extends Controller
     public function add(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'user_id'    => 'required|integer|exists:users,id',
             'product_id' => 'required|integer|exists:products,id',
             'type'       => 'required|in:add,remove',
         ]);
@@ -67,7 +56,9 @@ class WishlistController extends Controller
             ], 422);
         }
 
-        $wishlist = Wishlist::where('user_id', $request->user_id)
+        $user_id = auth()->id();
+
+        $wishlist = Wishlist::where('user_id', $user_id)
             ->where('product_id', $request->product_id)
             ->first();
 
@@ -81,7 +72,7 @@ class WishlistController extends Controller
             }
 
             Wishlist::create([
-                'user_id'    => $request->user_id,
+                'user_id'    => $user_id,
                 'product_id' => $request->product_id,
             ]);
 

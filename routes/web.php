@@ -42,6 +42,9 @@ use App\Http\Controllers\CardTypeController;
 use App\Http\Controllers\LeadController;
 use App\Http\Controllers\CardController;
 use App\Http\Controllers\OfferController;
+use App\Http\Controllers\ClientController;
+use App\Http\Controllers\FaqController;
+use App\Http\Controllers\Api\FaqController as ApiFaqController;
 
 // Cafe
 use App\Http\Controllers\cafe\TypeController;
@@ -55,6 +58,9 @@ Route::controller(LoginController::class)->group(function () {
 Route::controller(HomeController::class)->group(function () {
     Route::get('/', 'index')->name('home');
 });
+
+// Fallback API route for environments where api route cache/subfolder routing is stale.
+Route::get('api/faq', [ApiFaqController::class, 'faq']);
 
 Route::middleware(['auth:admin'])->group(function () {
 
@@ -138,6 +144,7 @@ Route::middleware(['auth:admin'])->group(function () {
         // Import Product
         Route::post('import', 'import')->name('import');
         Route::get('sample/download', 'sampleDownload')->name('sample.download');
+        Route::post('import-api-products', 'importApiProducts')->name('import_api_products');
     });
 
     Route::prefix('stores')->controller(StoreController::class)->name('store.')->group(function () {
@@ -374,6 +381,7 @@ Route::middleware(['auth:admin'])->group(function () {
         Route::get('', 'index')->name('index');
         Route::get('add/{id}', 'add')->name('add');
         Route::post('save', 'save')->name('save');
+        Route::delete('delete/{id}', 'delete')->name('delete');
         Route::get('edit/{id}', 'edit')->name('edit');
         Route::post('update', 'update')->name('update');
         Route::post('update-position', 'updatePosition')->name('updatePosition');
@@ -454,6 +462,26 @@ Route::middleware(['auth:admin'])->group(function () {
         Route::post('update', 'update')->name('update');
         Route::post('status', 'updateStatus')->name('status');
         Route::get('delete/{id}', 'delete')->name('delete');
+    });
+
+    Route::prefix('client')->controller(ClientController::class)->name('client.')->group(function () {
+        Route::get('', 'index')->name('index');
+        Route::get('add', 'add')->name('add');
+        Route::post('save', 'save')->name('save');
+        Route::get('edit/{id}', 'edit')->name('edit');
+        Route::post('update', 'update')->name('update');
+        Route::post('status', 'updateStatus')->name('status');
+        Route::get('delete/{id}', 'delete')->name('delete');
+    });
+
+    Route::prefix('faq')->controller(FaqController::class)->name('faq.')->group(function () {
+        Route::get('', 'index')->name('index');
+        Route::get('add', 'add')->name('add');
+        Route::post('save', 'save')->name('save');
+        Route::get('edit/{id}', 'edit')->name('edit');
+        Route::post('update', 'update')->name('update');
+        Route::post('status', 'updateStatus')->name('status');
+        Route::delete('delete/{id}', 'delete')->name('delete');
     });
 
 });

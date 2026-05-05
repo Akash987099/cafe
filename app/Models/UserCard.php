@@ -12,6 +12,9 @@ class UserCard extends Model
     protected $fillable = [
         'id',
         'user_id',
+        'name',
+        'mobile',
+        'email',
         'card_type_id',
         'card_number',
         'card_name',

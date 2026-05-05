@@ -61,6 +61,13 @@
                                 </div>
                             </div>
 
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="vehicle_name" class="form-label">Description</label>
+                                    <textarea class="form-control" id="description" name="description" placeholder="Enter Description" required>{{ $subcategory->description }}</textarea>
+                                </div>
+                            </div>
+
                         </div>
 
                         <div class="mt-4">

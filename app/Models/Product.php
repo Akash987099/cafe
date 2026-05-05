@@ -12,7 +12,8 @@ class Product extends Model
     protected $table = 'products';
 
     protected $fillable = [
-        'sku_product_id',
+        'sku_product_id', 
+        'client_id', 
         'name',
         'brand_name',
         'image',
@@ -60,9 +61,14 @@ class Product extends Model
         return $this->hasOne(Review::class, 'product_id', 'id');
     }
 
+    public function client()
+    {
+        return $this->belongsTo(Client::class, 'client_id', 'id');
+    }
+
     public function comboItems()
-{
-    return $this->hasMany(Combo::class, 'combo_product_id');
-}
+    {
+        return $this->hasMany(Combo::class, 'combo_product_id');
+    }
 
 }

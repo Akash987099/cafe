@@ -20,6 +20,8 @@ use App\Http\Controllers\Api\PaymentMethodController;
 use App\Http\Controllers\Api\LeadController;
 use App\Http\Controllers\Api\OfferController;
 use App\Http\Controllers\Api\PaylaterController;
+use App\Http\Controllers\Api\TableController;
+use App\Http\Controllers\Api\FaqController;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/verify-otp', [AuthController::class, 'verifyOtp']);
@@ -38,6 +40,9 @@ Route::get('/brands', [CategoryController::class, 'brands']);
 // Sliders
 Route::get('/slider', [SliderController::class, 'slider']);
 
+// Faq
+Route::get('/faq', [FaqController::class, 'faq']);
+    
 // Products
 Route::get('/products', [ProductController::class, 'products']);
 Route::get('/summer-products/{id}', [ProductController::class, 'summerProducts']);
@@ -76,6 +81,7 @@ Route::middleware(['auth:api', \App\Http\Middleware\TrackApiUserActivity::class]
     Route::post('/logout', [AuthController::class, 'logout']);
     
     Route::get('/payment-methods', [PaymentMethodController::class, 'index']);
+    Route::get('/table-no/{tableno}', [TableController::class, 'tableNo']);
 
     Route::get('/wallet', [UserController::class, 'walletPoints']);
     Route::get('/notifications', [UserController::class, 'notifications']);
